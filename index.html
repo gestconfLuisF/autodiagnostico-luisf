@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Autodiagnóstico de Excelencia Operacional – Maestría en Confección</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f0;color:#1a1a1a;min-height:100vh}
+.container{max-width:700px;margin:0 auto;padding:2rem 1rem}
+.header{text-align:center;margin-bottom:2rem}
+.header img{height:60px;margin-bottom:1rem}
+.header h1{font-size:1.5rem;font-weight:600;color:#1a1a1a;margin-bottom:0.25rem}
+.header p{font-size:0.9rem;color:#666}
+.card{background:#fff;border-radius:12px;padding:1.5rem;margin-bottom:1rem;border:1px solid #e5e5e5}
+.logo-text{font-size:0.75rem;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.5rem}
+.intro-title{font-size:1.4rem;font-weight:600;color:#1a1a1a;margin-bottom:1rem}
+.pilares{display:flex;flex-wrap:wrap;gap:6px;margin:0.75rem 0}
+.pilar-tag{font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;background:#f0f0ec;color:#555;border:1px solid #e0e0da}
+.progress-wrap{background:#f0f0ec;border-radius:99px;height:6px;margin:1rem 0 0.25rem;overflow:hidden}
+.progress-fill{height:6px;border-radius:99px;background:#1D9E75;transition:width 0.4s ease}
+.progress-label{font-size:12px;color:#888;margin-bottom:1.5rem}
+.area-label{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.25rem}
+.area-intro{font-size:14px;color:#666;line-height:1.6;margin-bottom:1.25rem;border-left:2px solid #e5e5e5;padding-left:0.75rem}
+.q-num{font-size:11px;color:#aaa;margin-bottom:0.5rem}
+.q-text{font-size:15px;color:#1a1a1a;line-height:1.55;margin-bottom:1rem}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt-btn{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1.5px solid #e5e5e5;border-radius:8px;background:#fff;cursor:pointer;text-align:left;width:100%;transition:all 0.15s}
+.opt-btn:hover{border-color:#5DCAA5;background:#f0fdf8}
+.opt-btn.selected{border-color:#1D9E75;border-width:2px;background:#E1F5EE}
+.opt-radio{width:20px;height:20px;border-radius:50%;border:1.5px solid #ccc;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.15s}
+.opt-btn.selected .opt-radio{background:#1D9E75;border-color:#1D9E75}
+.opt-radio-inner{width:8px;height:8px;border-radius:50%;background:white;opacity:0;transition:opacity 0.15s}
+.opt-btn.selected .opt-radio-inner{opacity:1}
+.opt-key{font-size:12px;font-weight:600;color:#888;min-width:14px}
+.opt-btn.selected .opt-key{color:#0F6E56}
+.opt-text{font-size:14px;color:#1a1a1a;line-height:1.45}
+.opt-btn.selected .opt-text{color:#085041}
+.selected-hint{font-size:12px;color:#1D9E75;font-weight:500;margin-top:0.75rem;min-height:18px}
+.btn{width:100%;padding:12px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;margin-top:0.75rem;transition:all 0.15s;border:none}
+.btn-primary{background:#1D9E75;color:#fff}
+.btn-primary:hover{background:#0F6E56}
+.btn-primary:disabled{background:#ccc;cursor:not-allowed}
+.btn-secondary{background:#fff;color:#1a1a1a;border:1.5px solid #e5e5e5}
+.btn-secondary:hover{background:#f5f5f0}
+.semaforo{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:500}
+.dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.dot.green{background:#1D9E75}.dot.yellow{background:#EF9F27}.dot.red{background:#E24B4A}
+.score-big{font-size:36px;font-weight:700;color:#1a1a1a}
+.score-label{font-size:13px;color:#888}
+.pilar-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f0f0ec;font-size:14px}
+.pilar-row:last-child{border-bottom:none}
+.section-title{font-size:15px;font-weight:600;color:#1a1a1a;margin:1.25rem 0 0.75rem}
+.tag{display:inline-block;font-size:12px;padding:4px 10px;border-radius:20px;margin:2px}
+.tag.green{background:#E1F5EE;color:#0F6E56}
+.tag.red{background:#FCEBEB;color:#A32D2D}
+.tag.amber{background:#FAEEDA;color:#854F0B}
+.cta-box{background:#f5f5f0;border-radius:12px;padding:1.25rem;margin-top:1.25rem}
+.cta-title{font-size:15px;font-weight:600;color:#1a1a1a;margin-bottom:0.5rem}
+.cta-text{font-size:13px;color:#666;line-height:1.55;margin-bottom:0.75rem}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap}
+.btn-row .btn{flex:1;margin-top:0}
+.form-input{width:100%;padding:10px 12px;border:1.5px solid #e5e5e5;border-radius:8px;background:#fff;color:#1a1a1a;font-size:14px;margin-bottom:8px;outline:none}
+.form-input:focus{border-color:#1D9E75}
+.loading{text-align:center;padding:2rem;color:#888;font-size:14px}
+.spinner{width:24px;height:24px;border:2px solid #e5e5e5;border-top-color:#1D9E75;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 1rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>Autodiagnóstico de Excelencia Operacional</h1>
+    <p>Maestría en Confección · Ing. Luis Fernando Londoño</p>
+  </div>
+  <div id="app"></div>
+</div>
+
+<script>
+const ANTHROPIC_API_KEY = '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';
+
+const DATA = {
+  areas: [
+    { id:'ing', name:'Ingeniería - Producción', intro:'Esta área evalúa la capacidad técnica y operativa de la empresa para estructurar, ejecutar y mejorar el proceso productivo. Se analizan tiempos estándar (SAM), fichas técnicas, estandarización de métodos, manejo de datos de eficiencia y diseño del espacio físico.', pesos:[0.25,0.30,0.10,0.25,0.10],
+      pilares:[
+        {name:'No Fallar',preguntas:['¿Se calculan y aplican SAMs propios para las operaciones clave de producción?','¿Se realizan balanceos técnicos de módulos o líneas de producción con base en SAM?','¿Se aplican técnicas de Economía de Movimientos para mejorar la eficiencia operativa?','¿Se valida y aprueba la primera prenda antes de continuar con la producción del lote?','¿Se detiene el proceso cuando se detecta un defecto grave en alguna operación?']},
+        {name:'Estándar',preguntas:['¿Se tienen fichas técnicas completas que incluyan materiales, operaciones y tiempos por prenda?','¿Se controla el cumplimiento de las fichas técnicas, en planta propia o en talleres tercerizados?','¿Están documentados y disponibles los métodos correctos de trabajo por operación?','¿Se capacita al personal en la correcta aplicación de métodos y fichas técnicas?','¿Se cuenta con procedimientos visuales o ayudas en los puestos de trabajo?']},
+        {name:'3S',preguntas:['¿Desde ingeniería se definen criterios técnicos para mantener el puesto libre de elementos innecesarios?','¿Los métodos de trabajo incluyen instrucciones visuales que facilitan la aplicación de las 3S?','¿Desde ingeniería se diseña el puesto considerando orden lógico, accesibilidad y eliminación de movimientos innecesarios?','¿Se hace seguimiento técnico al cumplimiento de las 3S en los puestos de producción?','¿La implementación de nuevos productos contempla ajustes en layout, orden y limpieza del espacio?']},
+        {name:'Data',preguntas:['¿Se tiene identificada y actualizada la información técnica de cada producto?','¿Se recopilan y analizan datos de eficiencia productiva por referencia, módulo, operario o taller?','¿Se hace trazabilidad y control del avance de la producción?','¿Se utilizan indicadores para evaluar el cumplimiento del plan de producción?','¿Se dispone de datos históricos de productos para tomar decisiones técnicas?']},
+        {name:'Optimización de Espacios',preguntas:['¿Desde ingeniería se identifican zonas mal utilizadas, congestionadas o ineficientes?','¿Se diseñan o ajustan los puestos buscando un flujo continuo y sin interferencias?','¿Se realiza análisis técnico para definir la ubicación de máquinas, herramientas o materiales en planta?','¿Se considera el espacio necesario para realizar correctamente las operaciones sin obstáculos?','¿Se han implementado cambios o redistribuciones para mejorar el uso del espacio y aumentar la eficiencia?']}
+      ]
+    },
+    { id:'cal', name:'Calidad', intro:'Esta área evalúa el nivel de madurez en los procesos de aseguramiento y control de calidad a lo largo del flujo productivo. Se analiza si la inspección está integrada al proceso, si existen criterios técnicos claros y si se usan datos e indicadores para tomar decisiones.', pesos:[0.25,0.25,0.15,0.25,0.10],
+      pilares:[
+        {name:'No Fallar',preguntas:['¿Se mide el nivel de defectuosos en cada paso del proceso?','¿Se mide el nivel de producto final defectuoso antes del despacho?','¿Se incluyen controles de inicio de proceso al inicio de cada turno?','¿Se realizan controles de integración o de corte antes de iniciar nuevos lotes?','¿El personal de calidad cuenta con formación y/o certificación para ejecutar su rol?']},
+        {name:'Estándar',preguntas:['¿Se tienen definidas y actualizadas las especificaciones de calidad para cada proceso y tipo de producto?','¿Existen instructivos o fichas de calidad para identificar y clasificar los defectos más frecuentes?','¿Se cuenta con un procedimiento estandarizado para el control de calidad?','¿Las acciones de calidad están integradas al flujo operativo y no son correctivas tardías?','¿Los criterios de calidad están alineados entre las áreas de diseño, producción y acabados?']},
+        {name:'3S',preguntas:['¿Los puestos de control de calidad están organizados y libres de elementos innecesarios?','¿Los elementos de medición o inspección están correctamente identificados, calibrados y ubicados?','¿Se realiza limpieza periódica en los espacios de revisión y auditoría de calidad?','¿Las zonas de inspección tienen señalización visual clara?','¿El equipo de calidad aplica prácticas de orden y limpieza como parte de su rutina diaria?']},
+        {name:'Data',preguntas:['¿Se registran y analizan los datos de calidad por referencia, módulo, taller o proceso?','¿Se lleva trazabilidad del defecto (tipo, ubicación, frecuencia) para tomar acciones correctivas?','¿Se utilizan indicadores de calidad (defectos por lote, por proceso, por persona)?','¿Se realiza análisis de causas frecuentes o críticas para proponer mejoras?','¿Se tienen registros históricos de defectos, devoluciones o retrabajos por tipo de producto?']},
+        {name:'Optimización de Espacios',preguntas:['¿El área de calidad cuenta con espacios definidos y bien ubicados dentro del flujo productivo?','¿Se ha considerado el espacio necesario para realizar inspecciones sin obstaculizar el proceso?','¿Las zonas de inspección están señalizadas y diferenciadas del área operativa?','¿Se evita acumulación de productos o reprocesos en la zona de calidad por falta de espacio?','¿Se han hecho mejoras en el layout de las zonas de calidad para optimizar tiempos y desplazamientos?']}
+      ]
+    },
+    { id:'cos', name:'Costos', intro:'Esta área evalúa qué tanto la empresa conoce, controla y utiliza estratégicamente su estructura de costos productivos. Se examina si se tienen claros los costos directos e indirectos, si se calculan correctamente los precios técnicos y si existen procedimientos para detectar desviaciones o costos ocultos.', pesos:[0.25,0.25,0.10,0.30,0.10],
+      pilares:[
+        {name:'No Fallar',preguntas:['¿Conoces cuál es tu costo minuto real de operación?','¿Se tiene claridad sobre el valor al que se paga o cobra el minuto de confección?','¿Se identifican y controlan los costos ocultos o indirectos que afectan la rentabilidad?','¿Se detectan con tiempo desviaciones entre el costo proyectado y el real de producción?','¿Se han generado acciones concretas desde costos para reducir errores y mejorar la rentabilidad?']},
+        {name:'Estándar',preguntas:['¿Se tiene un procedimiento claro para calcular el costo de producción por prenda o servicio?','¿Se cuenta con formatos o herramientas para registrar costos directos e indirectos?','¿Se tiene claridad y registro sobre márgenes brutos y netos por cliente o producto?','¿Existe una política o criterios definidos para calcular el precio de venta técnico?','¿Se documentan los costos reales de cada orden o referencia y se comparan con el estimado?']},
+        {name:'3S',preguntas:['¿Los documentos y archivos del área de costos están organizados por categorías claras y accesibles?','¿La información física o digital de costos está correctamente identificada y ubicada?','¿Se hace limpieza periódica de información obsoleta o duplicada en los documentos de costos?','¿Se dispone de ayudas visuales o formatos estándar que faciliten la gestión diaria del área de costos?','¿Los equipos y herramientas de análisis de costos están disponibles y en condiciones adecuadas?']},
+        {name:'Data',preguntas:['¿Se tienen datos actualizados de los costos directos e indirectos por referencia, cliente o servicio?','¿Se analizan periódicamente las desviaciones entre el costo proyectado y el real?','¿Se hace seguimiento a los costos ocultos o no planeados (reprocesos, tiempos muertos, devoluciones)?','¿Se generan reportes de costos con frecuencia definida para toma de decisiones?','¿Se visualizan indicadores clave relacionados con costos en reportes o tableros?']},
+        {name:'Optimización de Espacios',preguntas:['¿Se han cuantificado los ahorros generados por la optimización de espacios en reducción de costos?','¿Se realiza un seguimiento periódico de los costos asociados al uso del espacio físico?','¿Se han implementado medidas específicas para reducir los costos asociados al uso del espacio físico?','¿Se han establecido KPIs relacionados con la eficiencia en el uso del espacio y su impacto en costos?','¿Se han documentado casos de éxito donde la optimización de espacios haya resultado en ahorros?']}
+      ]
+    },
+    { id:'rrhh', name:'RRHH', intro:'Esta área evalúa el grado de alineación entre la gestión del talento humano y las exigencias técnicas y operativas de la empresa. Se analiza si existen perfiles claros, procesos de inducción efectivos, seguimiento a la curva de aprendizaje y criterios técnicos para evaluar desempeño.', pesos:[0.30,0.20,0.20,0.20,0.10],
+      pilares:[
+        {name:'No Fallar',preguntas:['¿Se tiene claridad sobre los perfiles requeridos para cada cargo operativo y técnico?','¿Se realiza una inducción formal y completa a cada nuevo ingreso, enfocada en el trabajo operativo?','¿Se realiza seguimiento a la curva de aprendizaje del personal nuevo hasta que alcanza su rendimiento esperado?','¿Se han definido y comunicado claramente los criterios de calidad, eficiencia y comportamiento esperados?','¿Se tienen mecanismos para detectar causas de rotación, ausentismo o bajo desempeño y tomar acciones correctivas?']},
+        {name:'Estándar',preguntas:['¿Se tienen definidos y documentados los procesos clave de RRHH (ingreso, salida, formación, evaluación)?','¿Se cuenta con formatos, checklists o plantillas para aplicar los procesos de RRHH de forma ordenada?','¿Se tiene una matriz de competencias técnicas y blandas para evaluar al personal?','¿El área de RRHH mantiene registros y seguimiento de los procesos realizados con cada persona?','¿Los procedimientos de RRHH están alineados con las necesidades reales del área operativa y técnica?']},
+        {name:'3S',preguntas:['¿RRHH promueve activamente la cultura de las 3S como parte del comportamiento esperado?','¿Se capacita al personal nuevo y actual en la importancia de mantener su puesto limpio, ordenado y funcional?','¿Los espacios gestionados por RRHH (documentación, lockers, avisos, tableros) reflejan orden y clasificación?','¿RRHH apoya o coordina campañas de mejora de 3S en planta?','¿La evaluación de desempeño incluye criterios relacionados con el orden y limpieza en el trabajo?']},
+        {name:'Data',preguntas:['¿Se tienen consolidados los datos de ingreso, salida, ausentismo y rotación del personal?','¿Se analiza la información de rotación y ausentismo para detectar patrones y tomar decisiones?','¿Se lleva trazabilidad de las evaluaciones realizadas al personal?','¿Se tiene registro de las formaciones impartidas y se usan para planear capacitaciones futuras?','¿RRHH aporta datos periódicos que permitan evaluar la estabilidad y productividad del equipo?']},
+        {name:'Optimización de Espacios',preguntas:['¿RRHH ha definido criterios técnicos para la asignación y uso de casilleros, lockers o áreas personales?','¿Los espacios gestionados por RRHH están organizados para facilitar el acceso rápido a la documentación?','¿Se considera el bienestar físico del personal al definir espacios como zonas de alimentación, descanso o baños?','¿Se cuenta con espacios adecuados y diferenciados para actividades como entrevistas, inducción o evaluaciones?','¿Se han hecho ajustes recientes para mejorar la distribución y accesibilidad de los espacios del personal?']}
+      ]
+    }
+  ]
+};
+
+const OPTS=[{key:'A',label:'No se hace',pts:0},{key:'B',label:'Se hace parcialmente',pts:3},{key:'C',label:'Se hace bien, se mide y se usa',pts:5},{key:'D',label:'No aplica',pts:null}];
+const TIPOS=['Maquila','Paquete completo con planta propia','Paquete completo con planta propia y terceros','Paquete completo sin planta propia','Servicios especializados (bordado, estampado, lavandería)','Taller creativo (emprendedores o diseñadores)'];
+
+let st={screen:'intro',empresa:'',tipo:undefined,areaIdx:0,pilarIdx:0,qIdx:0,answers:{},showPilar:false,showArea:false};
+
+function k(ai,pi,qi){return ai+'-'+pi+'-'+qi;}
+function avgP(ai,pi){let s=0,c=0;DATA.areas[ai].pilares[pi].preguntas.forEach((_,qi)=>{const v=st.answers[k(ai,pi,qi)];if(v!==undefined&&v!==null){s+=v;c++;}});return c>0?s/c:0;}
+function calcA(ai){return DATA.areas[ai].pesos.reduce((s,p,pi)=>s+avgP(ai,pi)*p,0);}
+function sem(v){return v>=4?{c:'green',l:'Consistente'}:v>=3?{c:'yellow',l:'En desarrollo'}:{c:'red',l:'Crítico / Bajo desempeño'};}
+function totalQ(){return DATA.areas.reduce((s,a)=>s+a.pilares.reduce((s2,p)=>s2+p.preguntas.length,0),0);}
+function answQ(){return Object.keys(st.answers).length;}
+function saveEmpresa(){const el=document.getElementById('emp-in');if(el)st.empresa=el.value;}
+
+function render(){
+  const app=document.getElementById('app');
+  if(st.screen==='intro') app.innerHTML=introH();
+  else if(st.screen==='context') app.innerHTML=ctxH();
+  else if(st.screen==='quiz') app.innerHTML=quizH();
+  else if(st.screen==='result') app.innerHTML=resultH();
+  else if(st.screen==='analysis') app.innerHTML=analysisH();
+  bind();
+}
+
+function introH(){return`<div class="card"><div class="logo-text">Maestría en Confección · Luis Fernando Londoño</div><div class="intro-title">Autodiagnóstico de Excelencia Operacional</div><p style="font-size:14px;color:#666;line-height:1.6;margin-bottom:1rem;">Evalúa el nivel de madurez operativa de tu empresa bajo un enfoque estructurado y objetivo, basado en los principios de la <strong>Excelencia Operacional</strong> aplicada a la industria de la confección.</p><div class="pilares">${['No Fallar','Estándar','3S','Data','Optimización de Espacios'].map(p=>`<span class="pilar-tag">${p}</span>`).join('')}</div><p style="font-size:13px;color:#888;margin-top:0.75rem;line-height:1.55;">Evaluará <strong>4 áreas</strong>: Ingeniería - Producción, Calidad, Costos y RRHH. Al finalizar recibirás un análisis con fortalezas, riesgos críticos y oportunidades de mejora.</p></div><button class="btn btn-primary" id="btn-start">Comenzar diagnóstico</button>`;}
+
+function ctxH(){return`<div class="card"><div class="area-label" style="margin-bottom:0.5rem;">Contexto empresarial</div><p class="q-text">¿Cuál es el nombre de tu empresa o proyecto?</p><input class="form-input" id="emp-in" placeholder="Ej. Confecciones ABC S.A.S." value="${st.empresa}" /><p class="q-text" style="margin-top:1rem;">¿Cuál tipología representa mejor a tu empresa?</p><div class="opts">${TIPOS.map((t,i)=>`<button class="opt-btn ${st.tipo===i?'selected':''}" data-tipo="${i}"><span class="opt-radio"><span class="opt-radio-inner"></span></span><span class="opt-key">${String.fromCharCode(65+i)}</span><span class="opt-text">${t}</span></button>`).join('')}</div></div><button class="btn btn-primary" id="btn-ctx" ${st.tipo===undefined?'disabled':''}>Iniciar evaluación →</button>`;}
+
+function quizH(){
+  if(st.showArea) return areaH();
+  if(st.showPilar) return pilarH();
+  const ai=st.areaIdx,pi=st.pilarIdx,qi=st.qIdx;
+  const area=DATA.areas[ai],pilar=area.pilares[pi];
+  const tot=totalQ(),ans=answQ(),pct=Math.round(ans/tot*100);
+  const kk=k(ai,pi,qi),sel=st.answers[kk];
+  const isSel=(o)=>o.key==='D'?sel===null:(sel!==undefined&&sel!==null&&sel===o.pts);
+  const selOpt=sel===null?OPTS[3]:OPTS.find(o=>o.pts===sel&&o.key!=='D');
+  const hint=sel===undefined?'':('Seleccionaste: '+selOpt?.key+' — '+selOpt?.label);
+  return`<div class="progress-wrap"><div class="progress-fill" style="width:${pct}%"></div></div><div class="progress-label">${ans} de ${tot} preguntas · ${pct}%</div><div class="area-label">${area.name} · Pilar: ${pilar.name}</div>${qi===0?`<div class="area-intro" style="margin-top:0.5rem;">${area.intro}</div>`:''}<div class="card"><div class="q-num">Pregunta ${qi+1} de ${pilar.preguntas.length}</div><div class="q-text">${pilar.preguntas[qi]}</div><div style="font-size:12px;color:#aaa;margin-bottom:0.75rem;">Selecciona una opción — puedes cambiarla antes de continuar:</div><div class="opts">${OPTS.map(o=>`<button class="opt-btn ${isSel(o)?'selected':''}" data-key="${o.key}" data-pts="${o.pts}"><span class="opt-radio"><span class="opt-radio-inner"></span></span><span class="opt-key">${o.key}</span><span class="opt-text"><strong>${o.key} = ${o.label}</strong>${o.pts!==null?' ('+o.pts+' pts)':' (excluida del promedio)'}</span></button>`).join('')}</div><div class="selected-hint">${hint}</div></div><button class="btn btn-primary" id="btn-next" ${sel===undefined?'disabled':''}>Siguiente →</button>`;
+}
+
+function pilarH(){
+  const ai=st.areaIdx,pi=st.pilarIdx,avg=avgP(ai,pi),s=sem(avg),isLast=pi===DATA.areas[ai].pilares.length-1;
+  return`<div class="card"><div class="area-label" style="margin-bottom:0.5rem;">Resultado del pilar</div><div style="font-size:16px;font-weight:600;color:#1a1a1a;margin-bottom:0.75rem;">${DATA.areas[ai].pilares[pi].name}</div><div style="display:flex;align-items:center;gap:1rem;"><div class="score-big">${avg.toFixed(1)}</div><div><div class="semaforo"><span class="dot ${s.c}"></span>${s.l}</div><div class="score-label">promedio del pilar</div></div></div></div><button class="btn btn-primary" id="btn-np">${isLast?'Ver resultado del área →':'Continuar con el siguiente pilar →'}</button>`;
+}
+
+function areaH(){
+  const ai=st.areaIdx,area=DATA.areas[ai],score=calcA(ai),s=sem(score),isLast=ai===DATA.areas.length-1;
+  return`<div class="card"><div class="area-label" style="margin-bottom:0.5rem;">Resultado del área</div><div style="font-size:16px;font-weight:600;color:#1a1a1a;margin-bottom:0.75rem;">${area.name}</div><div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem;"><div class="score-big">${score.toFixed(1)}</div><div><div class="semaforo"><span class="dot ${s.c}"></span>${s.l}</div><div class="score-label">calificación ponderada del área</div></div></div><div style="border-top:1px solid #f0f0ec;padding-top:0.75rem;">${area.pilares.map((p,pi)=>{const a=avgP(ai,pi),sp=sem(a);return`<div class="pilar-row"><span>${p.name}</span><div class="semaforo" style="font-size:13px;"><span class="dot ${sp.c}"></span>${a.toFixed(1)}</div></div>`;}).join('')}</div></div><button class="btn btn-primary" id="btn-na">${isLast?'Ver resultado final →':'Continuar con la siguiente área →'}</button>`;
+}
+
+function resultH(){
+  const scores=DATA.areas.map((_,ai)=>calcA(ai));
+  const global=scores.reduce((s,v)=>s+v,0)/scores.length,s=sem(global);
+  const forts=DATA.areas.filter((_,i)=>scores[i]>=4).map(a=>a.name);
+  const crits=DATA.areas.filter((_,i)=>scores[i]<3).map(a=>a.name);
+  const devs=DATA.areas.filter((_,i)=>scores[i]>=3&&scores[i]<4).map(a=>a.name);
+  const scoreStr=scores.map((sc,i)=>DATA.areas[i].name+': '+sc.toFixed(1)).join(', ');
+  return`<div class="area-label" style="margin-bottom:0.75rem;">Resultado final · ${st.empresa||'Tu empresa'}</div><div class="card" style="margin-bottom:0.75rem;"><div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem;"><div class="score-big">${global.toFixed(1)}</div><div><div class="semaforo"><span class="dot ${s.c}"></span>${s.l}</div><div class="score-label">calificación global del diagnóstico</div></div></div>${DATA.areas.map((a,i)=>{const sp=sem(scores[i]);return`<div class="pilar-row"><span>${a.name}</span><div class="semaforo" style="font-size:13px;"><span class="dot ${sp.c}"></span>${scores[i].toFixed(1)}</div></div>`;}).join('')}</div>${forts.length?`<div class="section-title">Fortalezas</div><div style="margin-bottom:1rem;">${forts.map(f=>`<span class="tag green">${f}</span>`).join('')}</div>`:''}${crits.length?`<div class="section-title">Riesgos críticos</div><div style="margin-bottom:1rem;">${crits.map(f=>`<span class="tag red">${f}</span>`).join('')}</div>`:''}${devs.length?`<div class="section-title">En desarrollo</div><div style="margin-bottom:1rem;">${devs.map(f=>`<span class="tag amber">${f}</span>`).join('')}</div>`:''}<button class="btn btn-primary" id="btn-analysis">Obtener análisis y recomendaciones con IA →</button><div class="cta-box" style="margin-top:1rem;"><div class="cta-title">¿Quieres acompañamiento personalizado?</div><div class="cta-text">Comparte este resultado con el Ing. Luis Fernando Londoño para recibir recomendaciones concretas para tu operación, sin ningún compromiso.</div><div class="btn-row"><button class="btn btn-primary" onclick="window.open('https://wa.me/573017276074?text=Hola+Ing.+Luis,+completé+el+autodiagnóstico.+Empresa:+${encodeURIComponent(st.empresa||'N/A')}+Puntaje+global:+${global.toFixed(1)}+Resultados:+${encodeURIComponent(scoreStr)}','_blank')">WhatsApp +57 301 727 6074</button><button class="btn btn-secondary" onclick="window.open('mailto:gerencia@luisf.co?subject=Resultado+Autodiagnóstico&body=Empresa:+${encodeURIComponent(st.empresa||'N/A')}%0APuntaje+global:+${global.toFixed(1)}%0A${encodeURIComponent(scoreStr)}','_blank')">gerencia@luisf.co</button></div></div>`;
+}
+
+function analysisH(){
+  return`<div class="card"><div class="loading"><div class="spinner"></div><p>Generando análisis personalizado con IA...</p></div></div>`;
+}
+
+async function getAnalysis(){
+  st.screen='analysis';render();
+  const scores=DATA.areas.map((_,ai)=>calcA(ai));
+  const global=scores.reduce((s,v)=>s+v,0)/scores.length;
+  const scoreStr=scores.map((sc,i)=>DATA.areas[i].name+': '+sc.toFixed(1)).join(', ');
+  const prompt=`Eres el Ing. Luis Fernando Londoño, experto en Excelencia Operacional para la industria de la confección con más de 30 años de experiencia y autor del libro "Patrones Velados, Problemas Revelados".
+
+Una empresa acaba de completar el autodiagnóstico con estos resultados:
+- Empresa: ${st.empresa||'N/A'}
+- Tipología: ${TIPOS[st.tipo]||'N/A'}
+- Puntaje global: ${global.toFixed(1)} de 5.0
+- Resultados por área: ${scoreStr}
+
+Escala de referencia: ≥4.0 = Consistente, ≥3.0 = En desarrollo, <3.0 = Crítico
+
+Genera un análisis profesional y concreto en español con:
+1. Una lectura general del diagnóstico (2-3 oraciones)
+2. El área más crítica y qué hacer primero (específico)
+3. Una hoja de ruta de 3 meses con acciones concretas
+4. Un mensaje motivador al final
+
+Sé directo, práctico y usa lenguaje cercano. Máximo 400 palabras.`;
+
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':ANTHROPIC_API_KEY,'anthropic-version':'2023-06-01'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})
+    });
+    const data=await resp.json();
+    const text=data.content?.[0]?.text||'No se pudo generar el análisis.';
+    document.getElementById('app').innerHTML=`<div class="card"><div class="area-label" style="margin-bottom:0.75rem;">Análisis personalizado · ${st.empresa||'Tu empresa'}</div><div style="font-size:14px;line-height:1.7;color:#333;white-space:pre-wrap;">${text}</div></div><div class="cta-box"><div class="cta-title">¿Quieres acompañamiento personalizado?</div><div class="cta-text">Contáctame directamente para trabajar juntos en la transformación de tu operación.</div><div class="btn-row"><button class="btn btn-primary" onclick="window.open('https://wa.me/573017276074','_blank')">WhatsApp +57 301 727 6074</button><button class="btn btn-secondary" onclick="window.open('mailto:gerencia@luisf.co','_blank')">gerencia@luisf.co</button></div></div>`;
+  }catch(e){
+    document.getElementById('app').innerHTML=`<div class="card"><p style="color:#E24B4A;">Error al generar el análisis. Por favor contáctanos directamente.</p></div>`;
+  }
+}
+
+function bind(){
+  document.getElementById('btn-start')?.addEventListener('click',()=>{st.screen='context';render();});
+  document.querySelectorAll('[data-tipo]').forEach(b=>b.addEventListener('click',()=>{saveEmpresa();st.tipo=parseInt(b.dataset.tipo);render();}));
+  document.getElementById('btn-ctx')?.addEventListener('click',()=>{if(st.tipo===undefined)return;saveEmpresa();st.screen='quiz';render();});
+  document.querySelectorAll('[data-key]').forEach(b=>b.addEventListener('click',()=>{const ai=st.areaIdx,pi=st.pilarIdx,qi=st.qIdx;st.answers[k(ai,pi,qi)]=b.dataset.pts==='null'?null:parseInt(b.dataset.pts);render();}));
+  document.getElementById('btn-next')?.addEventListener('click',()=>{const ai=st.areaIdx,pi=st.pilarIdx,qi=st.qIdx;if(qi+1<DATA.areas[ai].pilares[pi].preguntas.length){st.qIdx++;render();}else{st.showPilar=true;render();}});
+  document.getElementById('btn-np')?.addEventListener('click',()=>{st.showPilar=false;const ai=st.areaIdx,pi=st.pilarIdx;if(pi+1<DATA.areas[ai].pilares.length){st.pilarIdx++;st.qIdx=0;render();}else{st.showArea=true;render();}});
+  document.getElementById('btn-na')?.addEventListener('click',()=>{st.showArea=false;if(st.areaIdx+1<DATA.areas.length){st.areaIdx++;st.pilarIdx=0;st.qIdx=0;render();}else{st.screen='result';render();}});
+  document.getElementById('btn-analysis')?.addEventListener('click',()=>getAnalysis());
+}
+
+render();
+</script>
+</body>
+</html>
+HTMLEOF
+Salida
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Autodiagnóstico de Excelencia Operacional – Maestría en Confección</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f0;color:#1a1a1a;min-height:100vh}
+.container{max-width:700px;margin:0 auto;padding:2rem 1rem}
+.header{text-align:center;margin-bottom:2rem}
+.header img{height:60px;margin-bottom:1rem}
+.header h1{font-size:1.5rem;font-weight:600;color:#1a1a1a;margin-bottom:0.25rem}
+.header p{font-size:0.9rem;color:#666}
+.card{background:#fff;border-radius:12px;padding:1.5rem;margin-bottom:1rem;border:1px solid #e5e5e5}
+.logo-text{font-size:0.75rem;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.5rem}
+.intro-title{font-size:1.4rem;font-weight:600;color:#1a1a1a;margin-bottom:1rem}
+.pilares{display:flex;flex-wrap:wrap;gap:6px;margin:0.75rem 0}
+.pilar-tag{font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;background:#f0f0ec;color:#555;border:1px solid #e0e0da}
+.progress-wrap{background:#f0f0ec;border-radius:99px;height:6px;margin:1rem 0 0.25rem;overflow:hidden}
+.progress-fill{height:6px;border-radius:99px;background:#1D9E75;transition:width 0.4s ease}
+.progress-label{font-size:12px;color:#888;margin-bottom:1.5rem}
+.area-label{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.25rem}
+.area-intro{font-size:14px;color:#666;line-height:1.6;margin-bottom:1.25rem;border-left:2px solid #e5e5e5;padding-left:0.75rem}
+.q-num{font-size:11px;color:#aaa;margin-bottom:0.5rem}
+.q-text{font-size:15px;color:#1a1a1a;line-height:1.55;margin-bottom:1rem}
+.opts{display:flex;flex-direction:column;gap:8px}
+.opt-btn{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1.5px solid #e5e5e5;border-radius:8px;background:#fff;cursor:pointer;text-align:left;width:100%;transition:all 0.15s}
+.opt-btn:hover{border-color:#5DCAA5;background:#f0fdf8}
+.opt-btn.selected{border-color:#1D9E75;border-width:2px;background:#E1F5EE}
+.opt-radio{width:20px;height:20px;border-radius:50%;border:1.5px solid #ccc;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all 0.15s}
+.opt-btn.selected .opt-radio{background:#1D9E75;border-color:#1D9E75}
+.opt-radio-inner{width:8px;height:8px;border-radius:50%;background:white;opacity:0;transition:opacity 0.15s}
+.opt-btn.selected .opt-radio-inner{opacity:1}
+.opt-key{font-size:12px;font-weight:600;color:#888;min-width:14px}
+.opt-btn.selected .opt-key{color:#0F6E56}
+.opt-text{font-size:14px;color:#1a1a1a;line-height:1.45}
+.opt-btn.selected .opt-text{color:#085041}
+.selected-hint{font-size:12px;color:#1D9E75;font-weight:500;margin-top:0.75rem;min-height:18px}
+.btn{width:100%;padding:12px;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer;margin-top:0.75rem;transition:all 0.15s;border:none}
+.btn-primary{background:#1D9E75;color:#fff}
+.btn-primary:hover{background:#0F6E56}
+.btn-primary:disabled{background:#ccc;cursor:not-allowed}
+.btn-secondary{background:#fff;color:#1a1a1a;border:1.5px solid #e5e5e5}
+.btn-secondary:hover{background:#f5f5f0}
+.semaforo{display:inline-flex;align-items:center;gap:6px;font-size:14px;font-weight:500}
+.dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.dot.green{background:#1D9E75}.dot.yellow{background:#EF9F27}.dot.red{background:#E24B4A}
+.score-big{font-size:36px;font-weight:700;color:#1a1a1a}
+.score-label{font-size:13px;color:#888}
+.pilar-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid #f0f0ec;font-size:14px}
+.pilar-row:last-child{border-bottom:none}
+.section-title{font-size:15px;font-weight:600;color:#1a1a1a;margin:1.25rem 0 0.75rem}
+.tag{display:inline-block;font-size:12px;padding:4px 10px;border-radius:20px;margin:2px}
+.tag.green{background:#E1F5EE;color:#0F6E56}
+.tag.red{background:#FCEBEB;color:#A32D2D}
+.tag.amber{background:#FAEEDA;color:#854F0B}
+.cta-box{background:#f5f5f0;border-radius:12px;padding:1.25rem;margin-top:1.25rem}
+.cta-title{font-size:15px;font-weight:600;color:#1a1a1a;margin-bottom:0.5rem}
+.cta-text{font-size:13px;color:#666;line-height:1.55;margin-bottom:0.75rem}
+.btn-row{display:flex;gap:8px;flex-wrap:wrap}
+.btn-row .btn{flex:1;margin-top:0}
+.form-input{width:100%;padding:10px 12px;border:1.5px solid #e5e5e5;border-radius:8px;background:#fff;color:#1a1a1a;font-size:14px;margin-bottom:8px;outline:none}
+.form-input:focus{border-color:#1D9E75}
+.loading{text-align:center;padding:2rem;color:#888;font-size:14px}
+.spinner{width:24px;height:24px;border:2px solid #e5e5e5;border-top-color:#1D9E75;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 1rem}
+@keyframes spin{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="container">
+  <div class="header">
+    <h1>Autodiagnóstico de Excelencia Operacional</h1>
+    <p>Maestría en Confección · Ing. Luis Fernando Londoño</p>
+  </div>
+  <div id="app"></div>
+</div>
+
+<script>
+const ANTHROPIC_API_KEY = 'REEMPLAZAR_CON_TU_CLAVE_API';
+
+const DATA = {
+  areas: [
+    { id:'ing', name:'Ingeniería - Producción', intro:'Esta área evalúa la capacidad técnica y operativa de la empresa para estructurar, ejecutar y mejorar el proceso productivo. Se analizan tiempos estándar (SAM), fichas técnicas, estandarización de métodos, manejo de datos de eficiencia y diseño del espacio físico.', pesos:[0.25,0.30,0.10,0.25,0.10],
+      pilares:[
+        {name:'No Fallar',preguntas:['¿Se calculan y aplican SAMs propios para las operaciones clave de producción?','¿Se realizan balanceos técnicos de módulos o líneas de producción con base en SAM?','¿Se aplican técnicas de Economía de Movimientos para mejorar la eficiencia operativa?','¿Se valida y aprueba la primera prenda antes de continuar con la producción del lote?','¿Se detiene el proceso cuando se detecta un defecto grave en alguna operación?']},
+        {name:'Estándar',preguntas:['¿Se tienen fichas técnicas completas que incluyan materiales, operaciones y tiempos por prenda?','¿Se controla el cumplimiento de las fichas técnicas, en planta propia o en talleres tercerizados?','¿Están documentados y disponibles los métodos correctos de trabajo por operación?','¿Se capacita al personal en la correcta aplicación de métodos y fichas técnicas?','¿Se cuenta con procedimientos visuales o ayudas en los puestos de trabajo?']},
+        {name:'3S',preguntas:['¿Desde ingeniería se definen criterios técnicos para mantener el puesto libre de elementos innecesarios?','¿Los métodos de trabajo incluyen instrucciones visuales que facilitan la aplicación de las 3S?','¿Desde ingeniería se diseña el puesto considerando orden lógico, accesibilidad y eliminación de movimientos innecesarios?','¿Se hace seguimiento técnico al cumplimiento de las 3S en los puestos de producción?','¿La implementación de nuevos productos contempla ajustes en layout, orden y limpieza del espacio?']},
+        {name:'Data',preguntas:['¿Se tiene identificada y actualizada la información técnica de cada producto?','¿Se recopilan y analizan datos de eficiencia productiva por referencia, módulo, operario o taller?','¿Se hace trazabilidad y control del avance de la producción?','¿Se utilizan indicadores para evaluar el cumplimiento del plan de producción?','¿Se dispone de datos históricos de productos para tomar decisiones técnicas?']},
+        {name:'Optimización de Espacios',preguntas:['¿Desde ingeniería se identifican zonas mal utilizadas, congestionadas o ineficientes?','¿Se diseñan o ajustan los puestos buscando un flujo continuo y sin interferencias?','¿Se realiza análisis técnico para definir la ubicación de máquinas, herramientas o materiales en planta?','¿Se considera el espacio necesario para realizar correctamente las operaciones sin obstáculos?','¿Se han implementado cambios o redistribuciones para mejorar el uso del espacio y aumentar la eficiencia?']}
+      ]
+    },
+    { id:'cal', name:'Calidad', intro:'Esta área evalúa el nivel de madurez en los procesos de aseguramiento y control de calidad a lo largo del flujo productivo. Se analiza si la inspección está integrada al proceso, si existen criterios técnicos claros y si se usan datos e indicadores para tomar decisiones.', pesos:[0.25,0.25,0.15,0.25,0.10],
+      pilares:[
+        {name:'No Fallar',preguntas:['¿Se mide el nivel de defectuosos en cada paso del proceso?','¿Se mide el nivel de producto final defectuoso antes del despacho?','¿Se incluyen controles de inicio de proceso al inicio de cada turno?','¿Se realizan controles de integración o de corte antes de iniciar nuevos lotes?','¿El personal de calidad cuenta con formación y/o certificación para ejecutar su rol?']},
+        {name:'Estándar',preguntas:['¿Se tienen definidas y actualizadas las especificaciones de calidad para cada proceso y tipo de producto?','¿Existen instructivos o fichas de calidad para identificar y clasificar los defectos más frecuentes?','¿Se cuenta con un procedimiento estandarizado para el control de calidad?','¿Las acciones de calidad están integradas al flujo operativo y no son correctivas tardías?','¿Los criterios de calidad están alineados entre las áreas de diseño, producción y acabados?']},
+        {name:'3S',preguntas:['¿Los puestos de control de calidad están organizados y libres de elementos innecesarios?','¿Los elementos de medición o inspección están correctamente identificados, calibrados y ubicados?','¿Se realiza limpieza periódica en los espacios de revisión y auditoría de calidad?','¿Las zonas de inspección tienen señalización visual clara?','¿El equipo de calidad aplica prácticas de orden y limpieza como parte de su rutina diaria?']},
+        {name:'Data',preguntas:['¿Se registran y analizan los datos de calidad por referencia, módulo, taller o proceso?','¿Se lleva trazabilidad del defecto (tipo, ubicación, frecuencia) para tomar acciones correctivas?','¿Se utilizan indicadores de calidad (defectos por lote, por proceso, por persona)?','¿Se realiza análisis de causas frecuentes o críticas para proponer mejoras?','¿Se tienen registros históricos de defectos, devoluciones o retrabajos por tipo de producto?']},
+        {name:'Optimización de Espacios',preguntas:['¿El área de calidad cuenta con espacios definidos y bien ubicados dentro del flujo productivo?','¿Se ha considerado el espacio necesario para realizar inspecciones sin obstaculizar el proceso?','¿Las zonas de inspección están señalizadas y diferenciadas del área operativa?','¿Se evita acumulación de productos o reprocesos en la zona de calidad por falta de espacio?','¿Se han hecho mejoras en el layout de las zonas de calidad para optimizar tiempos y desplazamientos?']}
+      ]
+    },
+    { id:'cos', name:'Costos', intro:'Esta área evalúa qué tanto la empresa conoce, controla y utiliza estratégicamente su estructura de costos productivos. Se examina si se tienen claros los costos directos e indirectos, si se calculan correctamente los precios técnicos y si existen procedimientos para detectar desviaciones o costos ocultos.', pesos:[0.25,0.25,0.10,0.30,0.10],
+      pilares:[
+        {name:'No Fallar',preguntas:['¿Conoces cuál es tu costo minuto real de operación?','¿Se tiene claridad sobre el valor al que se paga o cobra el minuto de confección?','¿Se identifican y controlan los costos ocultos o indirectos que afectan la rentabilidad?','¿Se detectan con tiempo desviaciones entre el costo proyectado y el real de producción?','¿Se han generado acciones concretas desde costos para reducir errores y mejorar la rentabilidad?']},
+        {name:'Estándar',preguntas:['¿Se tiene un procedimiento claro para calcular el costo de producción por prenda o servicio?','¿Se cuenta con formatos o herramientas para registrar costos directos e indirectos?','¿Se tiene claridad y registro sobre márgenes brutos y netos por cliente o producto?','¿Existe una política o criterios definidos para calcular el precio de venta técnico?','¿Se documentan los costos reales de cada orden o referencia y se comparan con el estimado?']},
+        {name:'3S',preguntas:['¿Los documentos y archivos del área de costos están organizados por categorías claras y accesibles?','¿La información física o digital de costos está correctamente identificada y ubicada?','¿Se hace limpieza periódica de información obsoleta o duplicada en los documentos de costos?','¿Se dispone de ayudas visuales o formatos estándar que faciliten la gestión diaria del área de costos?','¿Los equipos y herramientas de análisis de costos están disponibles y en condiciones adecuadas?']},
+        {name:'Data',preguntas:['¿Se tienen datos actualizados de los costos directos e indirectos por referencia, cliente o servicio?','¿Se analizan periódicamente las desviaciones entre el costo proyectado y el real?','¿Se hace seguimiento a los costos ocultos o no planeados (reprocesos, tiempos muertos, devoluciones)?','¿Se generan reportes de costos con frecuencia definida para toma de decisiones?','¿Se visualizan indicadores clave relacionados con costos en reportes o tableros?']},
+        {name:'Optimización de Espacios',preguntas:['¿Se han cuantificado los ahorros generados por la optimización de espacios en reducción de costos?','¿Se realiza un seguimiento periódico de los costos asociados al uso del espacio físico?','¿Se han implementado medidas específicas para reducir los costos asociados al uso del espacio físico?','¿Se han establecido KPIs relacionados con la eficiencia en el uso del espacio y su impacto en costos?','¿Se han documentado casos de éxito donde la optimización de espacios haya resultado en ahorros?']}
+      ]
+    },
+    { id:'rrhh', name:'RRHH', intro:'Esta área evalúa el grado de alineación entre la gestión del talento humano y las exigencias técnicas y operativas de la empresa. Se analiza si existen perfiles claros, procesos de inducción efectivos, seguimiento a la curva de aprendizaje y criterios técnicos para evaluar desempeño.', pesos:[0.30,0.20,0.20,0.20,0.10],
+      pilares:[
+        {name:'No Fallar',preguntas:['¿Se tiene claridad sobre los perfiles requeridos para cada cargo operativo y técnico?','¿Se realiza una inducción formal y completa a cada nuevo ingreso, enfocada en el trabajo operativo?','¿Se realiza seguimiento a la curva de aprendizaje del personal nuevo hasta que alcanza su rendimiento esperado?','¿Se han definido y comunicado claramente los criterios de calidad, eficiencia y comportamiento esperados?','¿Se tienen mecanismos para detectar causas de rotación, ausentismo o bajo desempeño y tomar acciones correctivas?']},
+        {name:'Estándar',preguntas:['¿Se tienen definidos y documentados los procesos clave de RRHH (ingreso, salida, formación, evaluación)?','¿Se cuenta con formatos, checklists o plantillas para aplicar los procesos de RRHH de forma ordenada?','¿Se tiene una matriz de competencias técnicas y blandas para evaluar al personal?','¿El área de RRHH mantiene registros y seguimiento de los procesos realizados con cada persona?','¿Los procedimientos de RRHH están alineados con las necesidades reales del área operativa y técnica?']},
+        {name:'3S',preguntas:['¿RRHH promueve activamente la cultura de las 3S como parte del comportamiento esperado?','¿Se capacita al personal nuevo y actual en la importancia de mantener su puesto limpio, ordenado y funcional?','¿Los espacios gestionados por RRHH (documentación, lockers, avisos, tableros) reflejan orden y clasificación?','¿RRHH apoya o coordina campañas de mejora de 3S en planta?','¿La evaluación de desempeño incluye criterios relacionados con el orden y limpieza en el trabajo?']},
+        {name:'Data',preguntas:['¿Se tienen consolidados los datos de ingreso, salida, ausentismo y rotación del personal?','¿Se analiza la información de rotación y ausentismo para detectar patrones y tomar decisiones?','¿Se lleva trazabilidad de las evaluaciones realizadas al personal?','¿Se tiene registro de las formaciones impartidas y se usan para planear capacitaciones futuras?','¿RRHH aporta datos periódicos que permitan evaluar la estabilidad y productividad del equipo?']},
+        {name:'Optimización de Espacios',preguntas:['¿RRHH ha definido criterios técnicos para la asignación y uso de casilleros, lockers o áreas personales?','¿Los espacios gestionados por RRHH están organizados para facilitar el acceso rápido a la documentación?','¿Se considera el bienestar físico del personal al definir espacios como zonas de alimentación, descanso o baños?','¿Se cuenta con espacios adecuados y diferenciados para actividades como entrevistas, inducción o evaluaciones?','¿Se han hecho ajustes recientes para mejorar la distribución y accesibilidad de los espacios del personal?']}
+      ]
+    }
+  ]
+};
+
+const OPTS=[{key:'A',label:'No se hace',pts:0},{key:'B',label:'Se hace parcialmente',pts:3},{key:'C',label:'Se hace bien, se mide y se usa',pts:5},{key:'D',label:'No aplica',pts:null}];
+const TIPOS=['Maquila','Paquete completo con planta propia','Paquete completo con planta propia y terceros','Paquete completo sin planta propia','Servicios especializados (bordado, estampado, lavandería)','Taller creativo (emprendedores o diseñadores)'];
+
+let st={screen:'intro',empresa:'',tipo:undefined,areaIdx:0,pilarIdx:0,qIdx:0,answers:{},showPilar:false,showArea:false};
+
+function k(ai,pi,qi){return ai+'-'+pi+'-'+qi;}
+function avgP(ai,pi){let s=0,c=0;DATA.areas[ai].pilares[pi].preguntas.forEach((_,qi)=>{const v=st.answers[k(ai,pi,qi)];if(v!==undefined&&v!==null){s+=v;c++;}});return c>0?s/c:0;}
+function calcA(ai){return DATA.areas[ai].pesos.reduce((s,p,pi)=>s+avgP(ai,pi)*p,0);}
+function sem(v){return v>=4?{c:'green',l:'Consistente'}:v>=3?{c:'yellow',l:'En desarrollo'}:{c:'red',l:'Crítico / Bajo desempeño'};}
+function totalQ(){return DATA.areas.reduce((s,a)=>s+a.pilares.reduce((s2,p)=>s2+p.preguntas.length,0),0);}
+function answQ(){return Object.keys(st.answers).length;}
+function saveEmpresa(){const el=document.getElementById('emp-in');if(el)st.empresa=el.value;}
+
+function render(){
+  const app=document.getElementById('app');
+  if(st.screen==='intro') app.innerHTML=introH();
+  else if(st.screen==='context') app.innerHTML=ctxH();
+  else if(st.screen==='quiz') app.innerHTML=quizH();
+  else if(st.screen==='result') app.innerHTML=resultH();
+  else if(st.screen==='analysis') app.innerHTML=analysisH();
+  bind();
+}
+
+function introH(){return`<div class="card"><div class="logo-text">Maestría en Confección · Luis Fernando Londoño</div><div class="intro-title">Autodiagnóstico de Excelencia Operacional</div><p style="font-size:14px;color:#666;line-height:1.6;margin-bottom:1rem;">Evalúa el nivel de madurez operativa de tu empresa bajo un enfoque estructurado y objetivo, basado en los principios de la <strong>Excelencia Operacional</strong> aplicada a la industria de la confección.</p><div class="pilares">${['No Fallar','Estándar','3S','Data','Optimización de Espacios'].map(p=>`<span class="pilar-tag">${p}</span>`).join('')}</div><p style="font-size:13px;color:#888;margin-top:0.75rem;line-height:1.55;">Evaluará <strong>4 áreas</strong>: Ingeniería - Producción, Calidad, Costos y RRHH. Al finalizar recibirás un análisis con fortalezas, riesgos críticos y oportunidades de mejora.</p></div><button class="btn btn-primary" id="btn-start">Comenzar diagnóstico</button>`;}
+
+function ctxH(){return`<div class="card"><div class="area-label" style="margin-bottom:0.5rem;">Contexto empresarial</div><p class="q-text">¿Cuál es el nombre de tu empresa o proyecto?</p><input class="form-input" id="emp-in" placeholder="Ej. Confecciones ABC S.A.S." value="${st.empresa}" /><p class="q-text" style="margin-top:1rem;">¿Cuál tipología representa mejor a tu empresa?</p><div class="opts">${TIPOS.map((t,i)=>`<button class="opt-btn ${st.tipo===i?'selected':''}" data-tipo="${i}"><span class="opt-radio"><span class="opt-radio-inner"></span></span><span class="opt-key">${String.fromCharCode(65+i)}</span><span class="opt-text">${t}</span></button>`).join('')}</div></div><button class="btn btn-primary" id="btn-ctx" ${st.tipo===undefined?'disabled':''}>Iniciar evaluación →</button>`;}
+
+function quizH(){
+  if(st.showArea) return areaH();
+  if(st.showPilar) return pilarH();
+  const ai=st.areaIdx,pi=st.pilarIdx,qi=st.qIdx;
+  const area=DATA.areas[ai],pilar=area.pilares[pi];
+  const tot=totalQ(),ans=answQ(),pct=Math.round(ans/tot*100);
+  const kk=k(ai,pi,qi),sel=st.answers[kk];
+  const isSel=(o)=>o.key==='D'?sel===null:(sel!==undefined&&sel!==null&&sel===o.pts);
+  const selOpt=sel===null?OPTS[3]:OPTS.find(o=>o.pts===sel&&o.key!=='D');
+  const hint=sel===undefined?'':('Seleccionaste: '+selOpt?.key+' — '+selOpt?.label);
+  return`<div class="progress-wrap"><div class="progress-fill" style="width:${pct}%"></div></div><div class="progress-label">${ans} de ${tot} preguntas · ${pct}%</div><div class="area-label">${area.name} · Pilar: ${pilar.name}</div>${qi===0?`<div class="area-intro" style="margin-top:0.5rem;">${area.intro}</div>`:''}<div class="card"><div class="q-num">Pregunta ${qi+1} de ${pilar.preguntas.length}</div><div class="q-text">${pilar.preguntas[qi]}</div><div style="font-size:12px;color:#aaa;margin-bottom:0.75rem;">Selecciona una opción — puedes cambiarla antes de continuar:</div><div class="opts">${OPTS.map(o=>`<button class="opt-btn ${isSel(o)?'selected':''}" data-key="${o.key}" data-pts="${o.pts}"><span class="opt-radio"><span class="opt-radio-inner"></span></span><span class="opt-key">${o.key}</span><span class="opt-text"><strong>${o.key} = ${o.label}</strong>${o.pts!==null?' ('+o.pts+' pts)':' (excluida del promedio)'}</span></button>`).join('')}</div><div class="selected-hint">${hint}</div></div><button class="btn btn-primary" id="btn-next" ${sel===undefined?'disabled':''}>Siguiente →</button>`;
+}
+
+function pilarH(){
+  const ai=st.areaIdx,pi=st.pilarIdx,avg=avgP(ai,pi),s=sem(avg),isLast=pi===DATA.areas[ai].pilares.length-1;
+  return`<div class="card"><div class="area-label" style="margin-bottom:0.5rem;">Resultado del pilar</div><div style="font-size:16px;font-weight:600;color:#1a1a1a;margin-bottom:0.75rem;">${DATA.areas[ai].pilares[pi].name}</div><div style="display:flex;align-items:center;gap:1rem;"><div class="score-big">${avg.toFixed(1)}</div><div><div class="semaforo"><span class="dot ${s.c}"></span>${s.l}</div><div class="score-label">promedio del pilar</div></div></div></div><button class="btn btn-primary" id="btn-np">${isLast?'Ver resultado del área →':'Continuar con el siguiente pilar →'}</button>`;
+}
+
+function areaH(){
+  const ai=st.areaIdx,area=DATA.areas[ai],score=calcA(ai),s=sem(score),isLast=ai===DATA.areas.length-1;
+  return`<div class="card"><div class="area-label" style="margin-bottom:0.5rem;">Resultado del área</div><div style="font-size:16px;font-weight:600;color:#1a1a1a;margin-bottom:0.75rem;">${area.name}</div><div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem;"><div class="score-big">${score.toFixed(1)}</div><div><div class="semaforo"><span class="dot ${s.c}"></span>${s.l}</div><div class="score-label">calificación ponderada del área</div></div></div><div style="border-top:1px solid #f0f0ec;padding-top:0.75rem;">${area.pilares.map((p,pi)=>{const a=avgP(ai,pi),sp=sem(a);return`<div class="pilar-row"><span>${p.name}</span><div class="semaforo" style="font-size:13px;"><span class="dot ${sp.c}"></span>${a.toFixed(1)}</div></div>`;}).join('')}</div></div><button class="btn btn-primary" id="btn-na">${isLast?'Ver resultado final →':'Continuar con la siguiente área →'}</button>`;
+}
+
+function resultH(){
+  const scores=DATA.areas.map((_,ai)=>calcA(ai));
+  const global=scores.reduce((s,v)=>s+v,0)/scores.length,s=sem(global);
+  const forts=DATA.areas.filter((_,i)=>scores[i]>=4).map(a=>a.name);
+  const crits=DATA.areas.filter((_,i)=>scores[i]<3).map(a=>a.name);
+  const devs=DATA.areas.filter((_,i)=>scores[i]>=3&&scores[i]<4).map(a=>a.name);
+  const scoreStr=scores.map((sc,i)=>DATA.areas[i].name+': '+sc.toFixed(1)).join(', ');
+  return`<div class="area-label" style="margin-bottom:0.75rem;">Resultado final · ${st.empresa||'Tu empresa'}</div><div class="card" style="margin-bottom:0.75rem;"><div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem;"><div class="score-big">${global.toFixed(1)}</div><div><div class="semaforo"><span class="dot ${s.c}"></span>${s.l}</div><div class="score-label">calificación global del diagnóstico</div></div></div>${DATA.areas.map((a,i)=>{const sp=sem(scores[i]);return`<div class="pilar-row"><span>${a.name}</span><div class="semaforo" style="font-size:13px;"><span class="dot ${sp.c}"></span>${scores[i].toFixed(1)}</div></div>`;}).join('')}</div>${forts.length?`<div class="section-title">Fortalezas</div><div style="margin-bottom:1rem;">${forts.map(f=>`<span class="tag green">${f}</span>`).join('')}</div>`:''}${crits.length?`<div class="section-title">Riesgos críticos</div><div style="margin-bottom:1rem;">${crits.map(f=>`<span class="tag red">${f}</span>`).join('')}</div>`:''}${devs.length?`<div class="section-title">En desarrollo</div><div style="margin-bottom:1rem;">${devs.map(f=>`<span class="tag amber">${f}</span>`).join('')}</div>`:''}<button class="btn btn-primary" id="btn-analysis">Obtener análisis y recomendaciones con IA →</button><div class="cta-box" style="margin-top:1rem;"><div class="cta-title">¿Quieres acompañamiento personalizado?</div><div class="cta-text">Comparte este resultado con el Ing. Luis Fernando Londoño para recibir recomendaciones concretas para tu operación, sin ningún compromiso.</div><div class="btn-row"><button class="btn btn-primary" onclick="window.open('https://wa.me/573017276074?text=Hola+Ing.+Luis,+completé+el+autodiagnóstico.+Empresa:+${encodeURIComponent(st.empresa||'N/A')}+Puntaje+global:+${global.toFixed(1)}+Resultados:+${encodeURIComponent(scoreStr)}','_blank')">WhatsApp +57 301 727 6074</button><button class="btn btn-secondary" onclick="window.open('mailto:gerencia@luisf.co?subject=Resultado+Autodiagnóstico&body=Empresa:+${encodeURIComponent(st.empresa||'N/A')}%0APuntaje+global:+${global.toFixed(1)}%0A${encodeURIComponent(scoreStr)}','_blank')">gerencia@luisf.co</button></div></div>`;
+}
+
+function analysisH(){
+  return`<div class="card"><div class="loading"><div class="spinner"></div><p>Generando análisis personalizado con IA...</p></div></div>`;
+}
+
+async function getAnalysis(){
+  st.screen='analysis';render();
+  const scores=DATA.areas.map((_,ai)=>calcA(ai));
+  const global=scores.reduce((s,v)=>s+v,0)/scores.length;
+  const scoreStr=scores.map((sc,i)=>DATA.areas[i].name+': '+sc.toFixed(1)).join(', ');
+  const prompt=`Eres el Ing. Luis Fernando Londoño, experto en Excelencia Operacional para la industria de la confección con más de 30 años de experiencia y autor del libro "Patrones Velados, Problemas Revelados".
+
+Una empresa acaba de completar el autodiagnóstico con estos resultados:
+- Empresa: ${st.empresa||'N/A'}
+- Tipología: ${TIPOS[st.tipo]||'N/A'}
+- Puntaje global: ${global.toFixed(1)} de 5.0
+- Resultados por área: ${scoreStr}
+
+Escala de referencia: ≥4.0 = Consistente, ≥3.0 = En desarrollo, <3.0 = Crítico
+
+Genera un análisis profesional y concreto en español con:
+1. Una lectura general del diagnóstico (2-3 oraciones)
+2. El área más crítica y qué hacer primero (específico)
+3. Una hoja de ruta de 3 meses con acciones concretas
+4. Un mensaje motivador al final
+
+Sé directo, práctico y usa lenguaje cercano. Máximo 400 palabras.`;
+
+  try{
+    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',
+      headers:{'Content-Type':'application/json','x-api-key':ANTHROPIC_API_KEY,'anthropic-version':'2023-06-01'},
+      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})
+    });
+    const data=await resp.json();
+    const text=data.content?.[0]?.text||'No se pudo generar el análisis.';
+    document.getElementById('app').innerHTML=`<div class="card"><div class="area-label" style="margin-bottom:0.75rem;">Análisis personalizado · ${st.empresa||'Tu empresa'}</div><div style="font-size:14px;line-height:1.7;color:#333;white-space:pre-wrap;">${text}</div></div><div class="cta-box"><div class="cta-title">¿Quieres acompañamiento personalizado?</div><div class="cta-text">Contáctame directamente para trabajar juntos en la transformación de tu operación.</div><div class="btn-row"><button class="btn btn-primary" onclick="window.open('https://wa.me/573017276074','_blank')">WhatsApp +57 301 727 6074</button><button class="btn btn-secondary" onclick="window.open('mailto:gerencia@luisf.co','_blank')">gerencia@luisf.co</button></div></div>`;
+  }catch(e){
+    document.getElementById('app').innerHTML=`<div class="card"><p style="color:#E24B4A;">Error al generar el análisis. Por favor contáctanos directamente.</p></div>`;
+  }
+}
+
+function bind(){
+  document.getElementById('btn-start')?.addEventListener('click',()=>{st.screen='context';render();});
+  document.querySelectorAll('[data-tipo]').forEach(b=>b.addEventListener('click',()=>{saveEmpresa();st.tipo=parseInt(b.dataset.tipo);render();}));
+  document.getElementById('btn-ctx')?.addEventListener('click',()=>{if(st.tipo===undefined)return;saveEmpresa();st.screen='quiz';render();});
+  document.querySelectorAll('[data-key]').forEach(b=>b.addEventListener('click',()=>{const ai=st.areaIdx,pi=st.pilarIdx,qi=st.qIdx;st.answers[k(ai,pi,qi)]=b.dataset.pts==='null'?null:parseInt(b.dataset.pts);render();}));
+  document.getElementById('btn-next')?.addEventListener('click',()=>{const ai=st.areaIdx,pi=st.pilarIdx,qi=st.qIdx;if(qi+1<DATA.areas[ai].pilares[pi].preguntas.length){st.qIdx++;render();}else{st.showPilar=true;render();}});
+  document.getElementById('btn-np')?.addEventListener('click',()=>{st.showPilar=false;const ai=st.areaIdx,pi=st.pilarIdx;if(pi+1<DATA.areas[ai].pilares.length){st.pilarIdx++;st.qIdx=0;render();}else{st.showArea=true;render();}});
+  document.getElementById('btn-na')?.addEventListener('click',()=>{st.showArea=false;if(st.areaIdx+1<DATA.areas.length){st.areaIdx++;st.pilarIdx=0;st.qIdx=0;render();}else{st.screen='result';render();}});
+  document.getElementById('btn-analysis')?.addEventListener('click',()=>getAnalysis());
+}
+
+render();
+</script>
+</body>
+</html>
