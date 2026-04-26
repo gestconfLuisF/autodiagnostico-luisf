@@ -145,7 +145,7 @@ function render(){
 
 function introH(){return`<div class="card"><div class="logo-text">Maestría en Confección · Luis Fernando Londoño</div><div class="intro-title">Autodiagnóstico de Excelencia Operacional</div><p style="font-size:14px;color:#666;line-height:1.6;margin-bottom:1rem;">Evalúa el nivel de madurez operativa de tu empresa bajo un enfoque estructurado y objetivo, basado en los principios de la <strong>Excelencia Operacional</strong> aplicada a la industria de la confección.</p><div class="pilares">${['No Fallar','Estándar','3S','Data','Optimización de Espacios'].map(p=>`<span class="pilar-tag">${p}</span>`).join('')}</div><p style="font-size:13px;color:#888;margin-top:0.75rem;line-height:1.55;">Evaluará <strong>4 áreas</strong>: Ingeniería - Producción, Calidad, Costos y RRHH. Al finalizar recibirás un análisis con fortalezas, riesgos críticos y oportunidades de mejora.</p></div><button class="btn btn-primary" id="btn-start">Comenzar diagnóstico</button>`;}
 
-function ctxH(){return`<div class="card"><div class="area-label" style="margin-bottom:0.5rem;">Contexto empresarial</div><p class="q-text">¿Cuál es el nombre de tu empresa o proyecto?</p><input class="form-input" id="emp-in" placeholder="Ej. Confecciones ABC S.A.S." value="${st.empresa}" /><p class="q-text" style="margin-top:1rem;">¿Cuál tipología representa mejor a tu empresa?</p><div class="opts">${TIPOS.map((t,i)=>`<button class="opt-btn ${st.tipo===i?'selected':''}" data-tipo="${i}"><span class="opt-radio"><span class="opt-radio-inner"></span></span><span class="opt-key">${String.fromCharCode(65+i)}</span><span class="opt-text">${t}</span></button>`).join('')}</div></div><button class="btn btn-primary" id="btn-ctx" ${st.tipo===undefined?'disabled':''}>Iniciar evaluación →</button>`;}
+function ctxH(){return`<div class="card"><div class="area-label" style="margin-bottom:0.5rem;">Información del participante</div><p class="q-text">Por favor completa los siguientes datos antes de iniciar el diagnóstico:</p><input class="form-input" id="emp-in" placeholder="Nombre de la empresa *" value="${st.empresa}" /><input class="form-input" id="resp-in" placeholder="Nombre del responsable *" value="${st.responsable||''}" /><input class="form-input" id="cargo-in" placeholder="Cargo *" value="${st.cargo||''}" /><input class="form-input" id="email-in" placeholder="Correo electrónico *" value="${st.email||''}" /><input class="form-input" id="wapp-in" placeholder="WhatsApp (con código de país, ej: +57300...)" value="${st.whatsapp||''}" /><p class="q-text" style="margin-top:1rem;">¿Cuál tipología representa mejor a tu empresa?</p><div class="opts">${TIPOS.map((t,i)=>`<button class="opt-btn ${st.tipo===i?'selected':''}" data-tipo="${i}"><span class="opt-radio"><span class="opt-radio-inner"></span></span><span class="opt-key">${String.fromCharCode(65+i)}</span><span class="opt-text">${t}</span></button>`).join('')}</div><div style="margin-top:1.5rem;padding:1rem;background:#f5f5f0;border-radius:8px;font-size:12px;color:#888;line-height:1.6;"><strong style="color:#555;">Tratamiento de datos personales</strong><br>Al continuar, autoriza el tratamiento de sus datos personales conforme a la Ley 1581 de 2012 (Colombia) y el Reglamento General de Protección de Datos (GDPR) de la Unión Europea. Sus datos serán usados exclusivamente para el análisis de resultados y contacto por parte de GESTCONF · Ing. Luis Fernando Londoño. No serán compartidos con terceros sin su consentimiento. Tiene derecho a conocer, actualizar, rectificar y suprimir su información escribiendo a gerencia@luisf.co</div></div><button class="btn btn-primary" id="btn-ctx" ${st.tipo===undefined?'disabled':''}>Iniciar evaluación →</button>`;}
 
 function quizH(){
   if(st.showArea) return areaH();
@@ -183,44 +183,28 @@ function resultH(){
 function analysisH(){
   return`<div class="card"><div class="loading"><div class="spinner"></div><p>Generando análisis personalizado con IA...</p></div></div>`;
 }
-
 async function getAnalysis(){
   st.screen='analysis';render();
   const scores=DATA.areas.map((_,ai)=>calcA(ai));
   const global=scores.reduce((s,v)=>s+v,0)/scores.length;
-  const scoreStr=scores.map((sc,i)=>DATA.areas[i].name+': '+sc.toFixed(1)).join(', ');
-  const prompt=`Eres el Ing. Luis Fernando Londoño, experto en Excelencia Operacional para la industria de la confección con más de 30 años de experiencia y autor del libro "Patrones Velados, Problemas Revelados".
-
-Una empresa acaba de completar el autodiagnóstico con estos resultados:
-- Empresa: ${st.empresa||'N/A'}
-- Tipología: ${TIPOS[st.tipo]||'N/A'}
-- Puntaje global: ${global.toFixed(1)} de 5.0
-- Resultados por área: ${scoreStr}
-
-Escala de referencia: ≥4.0 = Consistente, ≥3.0 = En desarrollo, <3.0 = Crítico
-
-Genera un análisis profesional y concreto en español con:
-1. Una lectura general del diagnóstico (2-3 oraciones)
-2. El área más crítica y qué hacer primero (específico)
-3. Una hoja de ruta de 3 meses con acciones concretas
-4. Un mensaje motivador al final
-
-Sé directo, práctico y usa lenguaje cercano. Máximo 400 palabras.`;
-
   try{
-    const resp=await fetch('https://api.anthropic.com/v1/messages',{
+    const resp=await fetch('/api/analyze',{
       method:'POST',
-      headers:{'Content-Type':'application/json','x-api-key':ANTHROPIC_API_KEY,'anthropic-version':'2023-06-01'},
-      body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:1000,messages:[{role:'user',content:prompt}]})
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        empresa:st.empresa||'N/A',
+        tipo:TIPOS[st.tipo]||'N/A',
+        global:global.toFixed(1),
+        scores:scores.map(s=>s.toFixed(1))
+      })
     });
     const data=await resp.json();
-    const text=data.content?.[0]?.text||'No se pudo generar el análisis.';
+    const text=data.analysis||'No se pudo generar el análisis.';
     document.getElementById('app').innerHTML=`<div class="card"><div class="area-label" style="margin-bottom:0.75rem;">Análisis personalizado · ${st.empresa||'Tu empresa'}</div><div style="font-size:14px;line-height:1.7;color:#333;white-space:pre-wrap;">${text}</div></div><div class="cta-box"><div class="cta-title">¿Quieres acompañamiento personalizado?</div><div class="cta-text">Contáctame directamente para trabajar juntos en la transformación de tu operación.</div><div class="btn-row"><button class="btn btn-primary" onclick="window.open('https://wa.me/573017276074','_blank')">WhatsApp +57 301 727 6074</button><button class="btn btn-secondary" onclick="window.open('mailto:gerencia@luisf.co','_blank')">gerencia@luisf.co</button></div></div>`;
   }catch(e){
     document.getElementById('app').innerHTML=`<div class="card"><p style="color:#E24B4A;">Error al generar el análisis. Por favor contáctanos directamente.</p></div>`;
   }
 }
-
 function bind(){
   document.getElementById('btn-start')?.addEventListener('click',()=>{st.screen='context';render();});
   document.querySelectorAll('[data-tipo]').forEach(b=>b.addEventListener('click',()=>{saveEmpresa();st.tipo=parseInt(b.dataset.tipo);render();}));
