@@ -47,11 +47,11 @@ Genera un análisis en español con estas secciones:
 3. RECOMENDACIONES POR ÁREA (2 acciones concretas por área)
 4. HOJA DE RUTA 3 MESES
 5. PRÓXIMO PASO (invitar a contactar al Ing. Luis Fernando Londoño)
-Máximo 500 palabras.`;
+Máximo 900 palabras. Asegúrate de completar todas las secciones sin cortar ninguna.`;
 
     const aiBody = JSON.stringify({
       model: 'claude-opus-4-7',
-      max_tokens: 1000,
+      max_tokens: 2000,
       messages: [{ role: 'user', content: prompt }]
     });
 
@@ -148,7 +148,7 @@ Máximo 500 palabras.`;
 </body></html>`;
 
     const emailBody = JSON.stringify({
-      from: 'Autodiagnostico GESTCONF <onboarding@resend.dev>',
+      from: 'Autodiagnostico GESTCONF <autodiagnostico@luisf.co>',
       to: ['gerencia@luisf.co'],
       subject: `Nuevo diagnóstico: ${empresa} — Puntaje global ${global}`,
       html: emailHTML
