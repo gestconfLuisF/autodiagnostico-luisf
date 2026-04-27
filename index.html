@@ -87,9 +87,43 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 </head>
 <body>
 <div class="container">
-  <div class="header">
-    <h1>Autodiagnóstico de Excelencia Operacional</h1>
-    <p>Maestría en Confección · Ing. Luis Fernando Londoño</p>
+  <!-- HEADER BRANDING LUIS F. -->
+  <div style="background:#4A4A4A;border-radius:14px;padding:0;margin-bottom:2rem;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.18);">
+    <!-- Franja superior amarilla delgada -->
+    <div style="background:#FFBF07;height:5px;width:100%;"></div>
+    <div style="display:flex;align-items:center;gap:1.25rem;padding:1.25rem 1.5rem;">
+      <!-- Isotipo SVG recreado -->
+      <div style="flex-shrink:0;">
+        <svg width="52" height="52" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <!-- Marco exterior -->
+          <path d="M8,8 L8,72 L36,72 L36,92 L92,92 L92,28 L72,28 L72,8 Z" fill="none" stroke="#FFBF07" stroke-width="10" stroke-linejoin="round"/>
+          <!-- Rectángulo interior -->
+          <rect x="34" y="40" width="32" height="16" rx="2" fill="#FFBF07"/>
+          <!-- Corte esquina superior derecha del marco exterior -->
+          <polygon points="72,8 92,28 72,28" fill="#4A4A4A"/>
+          <path d="M72,8 L92,28" fill="none" stroke="#FFBF07" stroke-width="10"/>
+        </svg>
+      </div>
+      <!-- Texto marca -->
+      <div style="flex:1;">
+        <div style="display:flex;align-items:baseline;gap:0.5rem;margin-bottom:2px;">
+          <span style="font-size:1.6rem;font-weight:800;color:#FFBF07;letter-spacing:0.04em;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;">LUIS F.</span>
+          <span style="font-size:0.7rem;font-weight:600;color:#EDEFF1;letter-spacing:0.18em;text-transform:uppercase;opacity:0.8;">INGENIERO CONSULTOR</span>
+        </div>
+        <div style="width:100%;height:1px;background:rgba(255,191,7,0.3);margin-bottom:6px;"></div>
+        <p style="margin:0;font-size:0.85rem;color:#EDEFF1;font-weight:500;letter-spacing:0.01em;">Autodiagnóstico de Excelencia Operacional · Maestría en Confección</p>
+      </div>
+      <!-- Foto perfil -->
+      <div style="flex-shrink:0;width:58px;height:58px;border-radius:50%;overflow:hidden;border:2.5px solid #FFBF07;box-shadow:0 2px 10px rgba(0,0,0,0.3);">
+        <img src="LFL-5.jpg" 
+             onerror="this.outerHTML='<div style=&quot;width:58px;height:58px;border-radius:50%;background:#FFBF07;display:flex;align-items:center;justify-content:center;font-size:1.3rem;font-weight:800;color:#4A4A4A;&quot;>LF</div>'"
+             style="width:100%;height:100%;object-fit:cover;object-position:center top;" alt="Luis F."/>
+      </div>
+    </div>
+    <!-- Franja inferior sutil -->
+    <div style="background:rgba(255,191,7,0.12);padding:6px 1.5rem;">
+      <p style="margin:0;font-size:11px;color:rgba(237,239,241,0.6);letter-spacing:0.06em;">MAESTRÍA EN CONFECCIÓN · GESTCONF · luisf.co</p>
+    </div>
   </div>
   <div id="app"></div>
 </div>
