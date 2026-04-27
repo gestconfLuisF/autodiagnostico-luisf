@@ -67,7 +67,7 @@ Máximo 500 palabras.`;
     // Guardar en Google Sheets
 try {
   await new Promise((resolve, reject) => {
-    const sheetsUrl = 'https://script.google.com/macros/s/AKfycbxCCJnXdNjOPuNHYoAMioLcFAMTnErvloIefl8AdRk7Vm3-BfbR-r-2bq0C39Rkmlmnig/exec';
+    const sheetsUrl = 'https://script.google.com/macros/s/AKfycbxcT6g1hAJvCHxhi415C0A3E7J9g3dEPMp1MCVU-WP3doyFOAnOBF7a2iFQAy4RepqrPg/exec';
     const sheetsData = JSON.stringify({
       empresa: empresa,
       responsable: req.body.responsable||'',
@@ -81,7 +81,7 @@ try {
     });
     const sheetsOptions = {
       hostname: 'script.google.com',
-      path: '/macros/s/AKfycbxCCJnXdNjOPuNHYoAMioLcFAMTnErvloIefl8AdRk7Vm3-BfbR-r-2bq0C39Rkmlmnig/exec',
+      path: '/macros/s/AKfycbxcT6g1hAJvCHxhi415C0A3E7J9g3dEPMp1MCVU-WP3doyFOAnOBF7a2iFQAy4RepqrPg/exec',
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
