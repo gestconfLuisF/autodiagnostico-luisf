@@ -123,7 +123,7 @@ const DATA = {
 const OPTS=[{key:'A',label:'No se hace',pts:0},{key:'B',label:'Se hace parcialmente',pts:3},{key:'C',label:'Se hace bien, se mide y se usa',pts:5},{key:'D',label:'No aplica',pts:null}];
 const TIPOS=['Maquila','Paquete completo con planta propia','Paquete completo con planta propia y terceros','Paquete completo sin planta propia','Servicios especializados (bordado, estampado, lavandería)','Taller creativo (emprendedores o diseñadores)'];
 
-let st={screen:'intro',empresa:'',tipo:undefined,responsable:'',cargo:'',email:'',whatsapp:'',areaIdx:0,pilarIdx:0,qIdx:0,answers:{},showPilar:false,showArea:false};let lastAnalysis='';,empresa:'',tipo:undefined,areaIdx:0,pilarIdx:0,qIdx:0,answers:{},showPilar:false,showArea:false};
+let st={screen:'intro',empresa:'',tipo:undefined,areaIdx:0,pilarIdx:0,qIdx:0,answers:{},showPilar:false,showArea:false};
 
 function k(ai,pi,qi){return ai+'-'+pi+'-'+qi;}
 function avgP(ai,pi){let s=0,c=0;DATA.areas[ai].pilares[pi].preguntas.forEach((_,qi)=>{const v=st.answers[k(ai,pi,qi)];if(v!==undefined&&v!==null){s+=v;c++;}});return c>0?s/c:0;}
@@ -212,33 +212,8 @@ async function getAnalysis(){
     const data=await resp.json();
 console.log('Respuesta API:', JSON.stringify(data));
 const text=data.analysis||data.content?.[0]?.text||'No se pudo generar el análisis.';
- // Guardar en Google Sheets desde el navegador
-try {
-  fetch('https://script.google.com/macros/s/AKfycbxcT6g1hAJvCHxhi415C0A3E7J9g3dEPMp1MCVU-WP3doyFOAnOBF7a2iFQAy4RepqrPg/exec', {
-    method:'POST',
-    mode:'no-cors',
-    headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({
-      empresa:st.empresa||'N/A',
-      responsable:st.responsable||'',
-      cargo:st.cargo||'',
-      email:st.email||'',
-      whatsapp:st.whatsapp||'',
-      tipo:TIPOS[st.tipo]||'N/A',
-      global:global.toFixed(1),
-      scores:scores.map(s=>s.toFixed(1)),
-      respuestas:DATA.areas.flatMap((area,ai)=>area.pilares.flatMap((pilar,pi)=>pilar.preguntas.map((preg,qi)=>({
-        area:area.name,
-        pilar:pilar.name,
-        pregunta:preg,
-        respuesta:st.answers[ai+'-'+pi+'-'+qi]===null?'D':st.answers[ai+'-'+pi+'-'+qi]===0?'A':st.answers[ai+'-'+pi+'-'+qi]===3?'B':'C',
-        puntaje:st.answers[ai+'-'+pi+'-'+qi]===null?'N/A':st.answers[ai+'-'+pi+'-'+qi]
-      }))))
-    })
-  });
-} catch(e){ console.log('Sheets error:',e); }   
- lastAnalysis=text;
-const formatted=text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/#{1,3} /g,'').replace(/---/g,'<hr>').replace(/\n/g,'<br>');const waMsg=encodeURIComponent('Hola Ing. Luis, completé el Autodiagnóstico de Excelencia Operacional.\n\n*DATOS:*\nEmpresa: '+st.empresa+'\nResponsable: '+(st.responsable||'N/A')+'\nCargo: '+(st.cargo||'N/A')+'\nCorreo: '+(st.email||'N/A')+'\nWhatsApp: '+(st.whatsapp||'N/A')+'\nTipología: '+(TIPOS[st.tipo]||'N/A')+'\n\n*PUNTAJES:*\nGlobal: '+global.toFixed(1)+'/5.0\nIngeniería: '+scores[0].toFixed(1)+'\nCalidad: '+scores[1].toFixed(1)+'\nCostos: '+scores[2].toFixed(1)+'\nRRHH: '+scores[3].toFixed(1)+'\n\n*ANÁLISIS IA:*\n'+text.substring(0,500)+'...');document.getElementById('app').innerHTML=`<div class="card"><div class="area-label" style="margin-bottom:0.75rem;">Análisis personalizado · ${st.empresa||'Tu empresa'}</div><div style="font-size:14px;line-height:1.7;color:#333;">${formatted}</div></div><div class="cta-box"><div class="cta-title">¿Quieres acompañamiento personalizado?</div><div class="cta-text">Contáctame directamente para trabajar juntos en la transformación de tu operación.</div><div class="btn-row"><button class="btn btn-primary" onclick="window.open('https://wa.me/573017276074?text='+waMsg,'_blank')">WhatsApp +57 301 727 6074</button><button class="btn btn-secondary" onclick="window.open('mailto:gerencia@luisf.co','_blank')">gerencia@luisf.co</button></div></div>`;
+    
+ const formatted=text.replace(/\*\*(.*?)\*\*/g,'<strong>$1</strong>').replace(/#{1,3} /g,'').replace(/---/g,'<hr>').replace(/\n/g,'<br>');document.getElementById('app').innerHTML=`<div class="card"><div class="area-label" style="margin-bottom:0.75rem;">Análisis personalizado · ${st.empresa||'Tu empresa'}</div><div style="font-size:14px;line-height:1.7;color:#333;">${formatted}</div></div><div class="cta-box"><div class="cta-title">¿Quieres acompañamiento personalizado?</div><div class="cta-text">Contáctame directamente para trabajar juntos en la transformación de tu operación.</div><div class="btn-row"><button class="btn btn-primary" onclick="window.open('https://wa.me/573017276074','_blank')">WhatsApp +57 301 727 6074</button><button class="btn btn-secondary" onclick="window.open('mailto:gerencia@luisf.co','_blank')">gerencia@luisf.co</button></div></div>`;
   }catch(e){
     document.getElementById('app').innerHTML=`<div class="card"><p style="color:#E24B4A;">Error al generar el análisis. Por favor contáctanos directamente.</p></div>`;
   }
