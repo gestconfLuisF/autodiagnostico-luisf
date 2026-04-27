@@ -90,15 +90,52 @@ Maximo 900 palabras. Es OBLIGATORIO completar las 5 secciones sin cortar ninguna
     const areaNames = ['Ingenieria - Produccion', 'Calidad', 'Costos', 'RRHH'];
     const globalSem = semLabel(global);
 
-    // Tabla semaforo resumen
+    // Tabla semaforo resumen con pilares
+    const pilarNames = [
+      ['No Fallar','Estandar','3S','Data','Optimizacion de Espacios'],
+      ['No Fallar','Estandar','3S','Data','Optimizacion de Espacios'],
+      ['No Fallar','Estandar','3S','Data','Optimizacion de Espacios'],
+      ['No Fallar','Estandar','3S','Data','Optimizacion de Espacios']
+    ];
+    const pilarPesos = [
+      [0.25,0.30,0.10,0.25,0.10],
+      [0.25,0.25,0.15,0.25,0.10],
+      [0.25,0.25,0.10,0.30,0.10],
+      [0.30,0.20,0.20,0.20,0.10]
+    ];
+
+    // Calcular promedio por pilar desde las respuestas
+    function calcPilar(ai, pi) {
+      if (!respuestas || !respuestas.length) return 0;
+      const areaName = areaNames[ai];
+      const pilarName = pilarNames[ai][pi];
+      const qs = respuestas.filter(r => r.area === areaName && r.pilar === pilarName);
+      const valid = qs.filter(r => r.puntaje !== 'N/A');
+      if (!valid.length) return 0;
+      return valid.reduce((s, r) => s + parseFloat(r.puntaje), 0) / valid.length;
+    }
+
     const semaforoRows = scores.map((sc, i) => {
       const s = semLabel(sc);
-      return `<tr style="border-bottom:1px solid #eee;">
-        <td style="padding:10px 12px;font-size:14px;">${areaNames[i]}</td>
-        <td style="padding:10px 12px;text-align:center;font-size:20px;">${s.emoji}</td>
-        <td style="padding:10px 12px;text-align:center;font-weight:700;font-size:16px;">${sc}</td>
-        <td style="padding:10px 12px;font-size:13px;color:#666;">${s.label}</td>
-      </tr>`;
+      // Fila del área
+      let html = '<tr style="background:#f0fdf8;border-bottom:1px solid #cce;font-weight:700;">'
+        + '<td style="padding:10px 12px;font-size:14px;">' + areaNames[i] + '</td>'
+        + '<td style="padding:10px 12px;text-align:center;font-size:20px;">' + s.emoji + '</td>'
+        + '<td style="padding:10px 12px;text-align:center;font-weight:700;font-size:16px;">' + sc + '</td>'
+        + '<td style="padding:10px 12px;font-size:13px;color:#0F6E56;">' + s.label + '</td>'
+        + '</tr>';
+      // Filas de pilares
+      pilarNames[i].forEach((pn, pi) => {
+        const pv = calcPilar(i, pi);
+        const ps = semLabel(pv);
+        html += '<tr style="border-bottom:1px solid #f0f0ec;">'
+          + '<td style="padding:7px 12px 7px 24px;font-size:13px;color:#555;">↳ ' + pn + '</td>'
+          + '<td style="padding:7px 12px;text-align:center;font-size:16px;">' + ps.emoji + '</td>'
+          + '<td style="padding:7px 12px;text-align:center;font-size:13px;color:#555;">' + pv.toFixed(1) + '</td>'
+          + '<td style="padding:7px 12px;font-size:12px;color:#888;">' + ps.label + '</td>'
+          + '</tr>';
+      });
+      return html;
     }).join('');
 
     // Tabla 100 respuestas
