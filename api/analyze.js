@@ -104,13 +104,12 @@ Maximo 900 palabras. Es OBLIGATORIO completar las 5 secciones sin cortar ninguna
       [0.30,0.20,0.20,0.20,0.10]
     ];
 
-    // Calcular promedio por pilar desde las respuestas
+    // Calcular promedio por pilar usando posición (5 preguntas por pilar, 25 por área)
     function calcPilar(ai, pi) {
       if (!respuestas || !respuestas.length) return 0;
-      const areaName = areaNames[ai];
-      const pilarName = pilarNames[ai][pi];
-      const qs = respuestas.filter(r => r.area === areaName && r.pilar === pilarName);
-      const valid = qs.filter(r => r.puntaje !== 'N/A');
+      const start = ai * 25 + pi * 5;
+      const qs = respuestas.slice(start, start + 5);
+      const valid = qs.filter(r => r.puntaje !== 'N/A' && r.puntaje !== undefined);
       if (!valid.length) return 0;
       return valid.reduce((s, r) => s + parseFloat(r.puntaje), 0) / valid.length;
     }
