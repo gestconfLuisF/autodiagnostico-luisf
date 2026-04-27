@@ -64,7 +64,43 @@ Máximo 500 palabras.`;
     });
 
     const text = result.content?.[0]?.text || 'No se pudo obtener respuesta.';
-    return res.status(200).json({ analysis: text });
+    // Guardar en Google Sheets
+try {
+  await new Promise((resolve, reject) => {
+    const sheetsUrl = 'https://script.google.com/macros/s/AKfycbxCCJnXdNjOPuNHYoAMioLcFAMTnErvloIefl8AdRk7Vm3-BfbR-r-2bq0C39Rkmlmnig/exec';
+    const sheetsData = JSON.stringify({
+      empresa: empresa,
+      responsable: req.body.responsable||'',
+      cargo: req.body.cargo||'',
+      email: req.body.email||'',
+      whatsapp: req.body.whatsapp||'',
+      tipo: tipo,
+      global: global,
+      scores: scores,
+      respuestas: req.body.respuestas||[]
+    });
+    const sheetsOptions = {
+      hostname: 'script.google.com',
+      path: '/macros/s/AKfycbxCCJnXdNjOPuNHYoAMioLcFAMTnErvloIefl8AdRk7Vm3-BfbR-r-2bq0C39Rkmlmnig/exec',
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Content-Length': Buffer.byteLength(sheetsData)
+      }
+    };
+    const sheetsReq = https.request(sheetsOptions, (res) => {
+      res.on('data', () => {});
+      res.on('end', resolve);
+    });
+    sheetsReq.on('error', reject);
+    sheetsReq.write(sheetsData);
+    sheetsReq.end();
+  });
+} catch(sheetsError) {
+  console.log('Error guardando en Sheets:', sheetsError.message);
+}
+
+return res.status(200).json({ analysis: text });
 
   } catch (error) {
     return res.status(500).json({ analysis: 'Error: ' + error.message });
