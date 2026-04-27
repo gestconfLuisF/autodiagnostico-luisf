@@ -238,18 +238,17 @@ function resultH(){
   }).join('');
 
   // WhatsApp: mensaje corto y amigable — el informe completo llega por correo
-  const waMsg=encodeURIComponent(
-    `Hola Ing. Luis 👋 Acabo de completar el Autodiagnóstico de Excelencia Operacional.\n\n`+
-    `🏭 Empresa: ${st.empresa||'N/A'}\n`+
-    `👤 ${st.responsable||'N/A'} — ${st.cargo||'N/A'}\n`+
-    `📊 Puntaje global: ${global.toFixed(1)} / 5.0 (${s.l})\n\n`+
-    `Áreas:\n`+
-    `• Ingeniería: ${scores[0].toFixed(1)}\n`+
-    `• Calidad: ${scores[1].toFixed(1)}\n`+
-    `• Costos: ${scores[2].toFixed(1)}\n`+
-    `• RRHH: ${scores[3].toFixed(1)}\n\n`+
-    `Me gustaría conocer su opinión y explorar cómo mejorar nuestra operación. ¿Podemos hablar?`
-  );
+  const waMsgText = 'Hola Ing. Luis 👋 Acabo de completar el Autodiagnóstico de Excelencia Operacional.\n\n'
+    + '🏭 Empresa: ' + (st.empresa||'N/A') + '\n'
+    + '👤 ' + (st.responsable||'N/A') + ' — ' + (st.cargo||'N/A') + '\n'
+    + '📊 Puntaje global: ' + global.toFixed(1) + ' / 5.0 (' + s.l + ')\n\n'
+    + 'Áreas:\n'
+    + '• Ingeniería: ' + scores[0].toFixed(1) + '\n'
+    + '• Calidad: ' + scores[1].toFixed(1) + '\n'
+    + '• Costos: ' + scores[2].toFixed(1) + '\n'
+    + '• RRHH: ' + scores[3].toFixed(1) + '\n\n'
+    + 'Me gustaría conocer su opinión y explorar cómo mejorar nuestra operación. ¿Podemos hablar?';
+  const waMsg = encodeURIComponent(waMsgText);
 
   return`
     <div style="font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.75rem;">Resultado final · ${st.empresa||'Tu empresa'}</div>
