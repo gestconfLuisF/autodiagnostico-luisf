@@ -34,7 +34,7 @@ Genera un análisis en español con estas secciones:
 Máximo 500 palabras.`;
 
     const body = JSON.stringify({
-      model: 'claude-3-5-sonnet-20241022',
+      model: 'claude-3-haiku-20240307',
       max_tokens: 1000,
       messages: [{ role: 'user', content: prompt }]
     });
