@@ -9,7 +9,6 @@
 body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f5f5f0;color:#1a1a1a;min-height:100vh}
 .container{max-width:700px;margin:0 auto;padding:2rem 1rem}
 .header{text-align:center;margin-bottom:2rem}
-.header img{height:60px;margin-bottom:1rem}
 .header h1{font-size:1.5rem;font-weight:600;color:#1a1a1a;margin-bottom:0.25rem}
 .header p{font-size:0.9rem;color:#666}
 .card{background:#fff;border-radius:12px;padding:1.5rem;margin-bottom:1rem;border:1px solid #e5e5e5}
@@ -19,9 +18,11 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .pilar-tag{font-size:11px;font-weight:500;padding:3px 10px;border-radius:20px;background:#f0f0ec;color:#555;border:1px solid #e0e0da}
 .progress-wrap{background:#f0f0ec;border-radius:99px;height:6px;margin:1rem 0 0.25rem;overflow:hidden}
 .progress-fill{height:6px;border-radius:99px;background:#1D9E75;transition:width 0.4s ease}
-.progress-label{font-size:12px;color:#888;margin-bottom:1.5rem}
-.area-label{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.25rem}
-/* CAMBIO 1: área-intro con fondo verde y texto blanco */
+.progress-label{font-size:12px;color:#888;margin-bottom:1rem}
+
+/* CAMBIO 1: área y pilar más grandes y con más protagonismo */
+.area-pilar-label{font-size:15px;font-weight:700;color:#1a1a1a;margin-bottom:1rem;padding:0.5rem 0.75rem;background:#f0fdf8;border-left:3px solid #1D9E75;border-radius:0 6px 6px 0;}
+
 .area-intro{font-size:14px;color:#fff;line-height:1.6;margin-bottom:1.25rem;background:#1D9E75;padding:0.75rem 1rem;border-radius:8px;}
 .q-num{font-size:11px;color:#aaa;margin-bottom:0.5rem}
 .q-text{font-size:15px;color:#1a1a1a;line-height:1.55;margin-bottom:1rem}
@@ -66,7 +67,9 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .loading{text-align:center;padding:2rem;color:#888;font-size:14px}
 .spinner{width:24px;height:24px;border:2px solid #e5e5e5;border-top-color:#1D9E75;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 1rem}
 @keyframes spin{to{transform:rotate(360deg)}}
-/* CAMBIO 2: estilos para el análisis IA formateado */
+
+/* CAMBIO 3: análisis completo con scroll */
+.analysis-content{font-size:14px;line-height:1.7;color:#333;max-height:none;overflow:visible;}
 .analysis-content h1,.analysis-content h2{font-size:16px;font-weight:700;color:#1D9E75;margin:1.25rem 0 0.5rem;padding-bottom:0.25rem;border-bottom:1px solid #E1F5EE;}
 .analysis-content h3{font-size:15px;font-weight:600;color:#0F6E56;margin:1rem 0 0.4rem;}
 .analysis-content p{font-size:14px;color:#333;line-height:1.7;margin-bottom:0.75rem;}
@@ -74,6 +77,12 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;backgrou
 .analysis-content li{font-size:14px;color:#333;line-height:1.65;margin-bottom:0.25rem;}
 .analysis-content hr{border:none;border-top:1px solid #e5e5e5;margin:1rem 0;}
 .analysis-content strong{color:#1a1a1a;font-weight:600;}
+
+/* CAMBIO 2: área expandida en resultado final */
+.area-block{margin-bottom:1.25rem;border:1px solid #e5e5e5;border-radius:10px;overflow:hidden;}
+.area-block-header{display:flex;justify-content:space-between;align-items:center;padding:0.75rem 1rem;background:#f9f9f7;border-bottom:1px solid #f0f0ec;}
+.area-block-name{font-size:15px;font-weight:700;color:#1a1a1a;}
+.area-block-pilares{padding:0 1rem;}
 </style>
 </head>
 <body>
@@ -130,10 +139,7 @@ const DATA = {
 const OPTS=[{key:'A',label:'No se hace',pts:0},{key:'B',label:'Se hace parcialmente',pts:3},{key:'C',label:'Se hace bien, se mide y se usa',pts:5},{key:'D',label:'No aplica',pts:null}];
 const TIPOS=['Maquila','Paquete completo con planta propia','Paquete completo con planta propia y terceros','Paquete completo sin planta propia','Servicios especializados (bordado, estampado, lavandería)','Taller creativo (emprendedores o diseñadores)'];
 
-// CAMBIO 6: variable global para guardar el análisis generado
 let lastAnalysis = '';
-
-// CAMBIO 4: st incluye responsable, cargo, email, whatsapp
 let st={screen:'intro',empresa:'',responsable:'',cargo:'',email:'',whatsapp:'',tipo:undefined,areaIdx:0,pilarIdx:0,qIdx:0,answers:{},showPilar:false,showArea:false};
 
 function k(ai,pi,qi){return ai+'-'+pi+'-'+qi;}
@@ -143,7 +149,6 @@ function sem(v){return v>=4?{c:'green',l:'Consistente'}:v>=3?{c:'yellow',l:'En d
 function totalQ(){return DATA.areas.reduce((s,a)=>s+a.pilares.reduce((s2,p)=>s2+p.preguntas.length,0),0);}
 function answQ(){return Object.keys(st.answers).length;}
 
-// CAMBIO 5: saveEmpresa guarda todos los campos del formulario
 function saveEmpresa(){
   const el=document.getElementById('emp-in');if(el)st.empresa=el.value;
   const r=document.getElementById('resp-in');if(r)st.responsable=r.value;
@@ -152,7 +157,6 @@ function saveEmpresa(){
   const w=document.getElementById('wapp-in');if(w)st.whatsapp=w.value;
 }
 
-// CAMBIO 2: función para convertir Markdown a HTML limpio
 function markdownToHtml(text){
   return text
     .replace(/^### (.+)$/gm,'<h3>$1</h3>')
@@ -180,7 +184,7 @@ function render(){
 
 function introH(){return`<div class="card"><div class="logo-text">Maestría en Confección · Luis Fernando Londoño</div><div class="intro-title">Autodiagnóstico de Excelencia Operacional</div><p style="font-size:14px;color:#666;line-height:1.6;margin-bottom:1rem;">Evalúa el nivel de madurez operativa de tu empresa bajo un enfoque estructurado y objetivo, basado en los principios de la <strong>Excelencia Operacional</strong> aplicada a la industria de la confección.</p><div class="pilares">${['No Fallar','Estándar','3S','Data','Optimización de Espacios'].map(p=>`<span class="pilar-tag">${p}</span>`).join('')}</div><p style="font-size:13px;color:#888;margin-top:0.75rem;line-height:1.55;">Evaluará <strong>4 áreas</strong>: Ingeniería - Producción, Calidad, Costos y RRHH. Al finalizar recibirás un análisis con fortalezas, riesgos críticos y oportunidades de mejora.</p></div><button class="btn btn-primary" id="btn-start">Comenzar diagnóstico</button>`;}
 
-function ctxH(){return`<div class="card"><div class="area-label" style="margin-bottom:0.5rem;">Información del participante</div><p class="q-text">Por favor completa los siguientes datos antes de iniciar el diagnóstico:</p><input class="form-input" id="emp-in" placeholder="Nombre de la empresa *" value="${st.empresa}" /><input class="form-input" id="resp-in" placeholder="Nombre del responsable *" value="${st.responsable||''}" /><input class="form-input" id="cargo-in" placeholder="Cargo *" value="${st.cargo||''}" /><input class="form-input" id="email-in" placeholder="Correo electrónico *" value="${st.email||''}" /><input class="form-input" id="wapp-in" placeholder="WhatsApp (con código de país, ej: +57300...)" value="${st.whatsapp||''}" /><p class="q-text" style="margin-top:1rem;">¿Cuál tipología representa mejor a tu empresa?</p><div class="opts">${TIPOS.map((t,i)=>`<button class="opt-btn ${st.tipo===i?'selected':''}" data-tipo="${i}"><span class="opt-radio"><span class="opt-radio-inner"></span></span><span class="opt-key">${String.fromCharCode(65+i)}</span><span class="opt-text">${t}</span></button>`).join('')}</div><div style="margin-top:1.5rem;padding:1rem;background:#f5f5f0;border-radius:8px;font-size:12px;color:#888;line-height:1.6;"><strong style="color:#555;">Tratamiento de datos personales</strong><br>Al continuar, autoriza el tratamiento de sus datos personales conforme a la Ley 1581 de 2012 (Colombia) y el Reglamento General de Protección de Datos (GDPR) de la Unión Europea. Sus datos serán usados exclusivamente para el análisis de resultados y contacto por parte de GESTCONF · Ing. Luis Fernando Londoño. No serán compartidos con terceros sin su consentimiento. Tiene derecho a conocer, actualizar, rectificar y suprimir su información escribiendo a gerencia@luisf.co</div></div><button class="btn btn-primary" id="btn-ctx" ${st.tipo===undefined?'disabled':''}>Iniciar evaluación →</button>`;}
+function ctxH(){return`<div class="card"><div class="area-label" style="font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.5rem;">Información del participante</div><p class="q-text">Por favor completa los siguientes datos antes de iniciar el diagnóstico:</p><input class="form-input" id="emp-in" placeholder="Nombre de la empresa *" value="${st.empresa}" /><input class="form-input" id="resp-in" placeholder="Nombre del responsable *" value="${st.responsable||''}" /><input class="form-input" id="cargo-in" placeholder="Cargo *" value="${st.cargo||''}" /><input class="form-input" id="email-in" placeholder="Correo electrónico *" value="${st.email||''}" /><input class="form-input" id="wapp-in" placeholder="WhatsApp (con código de país, ej: +57300...)" value="${st.whatsapp||''}" /><p class="q-text" style="margin-top:1rem;">¿Cuál tipología representa mejor a tu empresa?</p><div class="opts">${TIPOS.map((t,i)=>`<button class="opt-btn ${st.tipo===i?'selected':''}" data-tipo="${i}"><span class="opt-radio"><span class="opt-radio-inner"></span></span><span class="opt-key">${String.fromCharCode(65+i)}</span><span class="opt-text">${t}</span></button>`).join('')}</div><div style="margin-top:1.5rem;padding:1rem;background:#f5f5f0;border-radius:8px;font-size:12px;color:#888;line-height:1.6;"><strong style="color:#555;">Tratamiento de datos personales</strong><br>Al continuar, autoriza el tratamiento de sus datos personales conforme a la Ley 1581 de 2012 (Colombia) y el Reglamento General de Protección de Datos (GDPR) de la Unión Europea. Sus datos serán usados exclusivamente para el análisis de resultados y contacto por parte de GESTCONF · Ing. Luis Fernando Londoño. No serán compartidos con terceros sin su consentimiento. Tiene derecho a conocer, actualizar, rectificar y suprimir su información escribiendo a gerencia@luisf.co</div></div><button class="btn btn-primary" id="btn-ctx" ${st.tipo===undefined?'disabled':''}>Iniciar evaluación →</button>`;}
 
 function quizH(){
   if(st.showArea) return areaH();
@@ -192,27 +196,83 @@ function quizH(){
   const isSel=(o)=>o.key==='D'?sel===null:(sel!==undefined&&sel!==null&&sel===o.pts);
   const selOpt=sel===null?OPTS[3]:OPTS.find(o=>o.pts===sel&&o.key!=='D');
   const hint=sel===undefined?'':('Seleccionaste: '+selOpt?.key+' — '+selOpt?.label);
-  return`<div class="progress-wrap"><div class="progress-fill" style="width:${pct}%"></div></div><div class="progress-label">${ans} de ${tot} preguntas · ${pct}%</div><div class="area-label">${area.name} · Pilar: ${pilar.name}</div>${qi===0?`<div class="area-intro">${area.intro}</div>`:''}<div class="card"><div class="q-num">Pregunta ${qi+1} de ${pilar.preguntas.length}</div><div class="q-text">${pilar.preguntas[qi]}</div><div style="font-size:12px;color:#aaa;margin-bottom:0.75rem;">Selecciona una opción — puedes cambiarla antes de continuar:</div><div class="opts">${OPTS.map(o=>`<button class="opt-btn ${isSel(o)?'selected':''}" data-key="${o.key}" data-pts="${o.pts}"><span class="opt-radio"><span class="opt-radio-inner"></span></span><span class="opt-key">${o.key}</span><span class="opt-text"><strong>${o.key} = ${o.label}</strong>${o.pts!==null?' ('+o.pts+' pts)':' (excluida del promedio)'}</span></button>`).join('')}</div><div class="selected-hint">${hint}</div></div><button class="btn btn-primary" id="btn-next" ${sel===undefined?'disabled':''}>Siguiente →</button>`;
+  // CAMBIO 1: área y pilar con mayor protagonismo
+  return`<div class="progress-wrap"><div class="progress-fill" style="width:${pct}%"></div></div>
+  <div class="progress-label">${ans} de ${tot} preguntas · ${pct}%</div>
+  <div class="area-pilar-label">${area.name} &nbsp;›&nbsp; Pilar: ${pilar.name}</div>
+  ${qi===0?`<div class="area-intro">${area.intro}</div>`:''}
+  <div class="card"><div class="q-num">Pregunta ${qi+1} de ${pilar.preguntas.length}</div><div class="q-text">${pilar.preguntas[qi]}</div><div style="font-size:12px;color:#aaa;margin-bottom:0.75rem;">Selecciona una opción — puedes cambiarla antes de continuar:</div><div class="opts">${OPTS.map(o=>`<button class="opt-btn ${isSel(o)?'selected':''}" data-key="${o.key}" data-pts="${o.pts}"><span class="opt-radio"><span class="opt-radio-inner"></span></span><span class="opt-key">${o.key}</span><span class="opt-text"><strong>${o.key} = ${o.label}</strong>${o.pts!==null?' ('+o.pts+' pts)':' (excluida del promedio)'}</span></button>`).join('')}</div><div class="selected-hint">${hint}</div></div><button class="btn btn-primary" id="btn-next" ${sel===undefined?'disabled':''}>Siguiente →</button>`;
 }
 
 function pilarH(){
   const ai=st.areaIdx,pi=st.pilarIdx,avg=avgP(ai,pi),s=sem(avg),isLast=pi===DATA.areas[ai].pilares.length-1;
-  return`<div class="card"><div class="area-label" style="margin-bottom:0.5rem;">Resultado del pilar</div><div style="font-size:16px;font-weight:600;color:#1a1a1a;margin-bottom:0.75rem;">${DATA.areas[ai].pilares[pi].name}</div><div style="display:flex;align-items:center;gap:1rem;"><div class="score-big">${avg.toFixed(1)}</div><div><div class="semaforo"><span class="dot ${s.c}"></span>${s.l}</div><div class="score-label">promedio del pilar</div></div></div></div><button class="btn btn-primary" id="btn-np">${isLast?'Ver resultado del área →':'Continuar con el siguiente pilar →'}</button>`;
+  return`<div class="card"><div style="font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.5rem;">Resultado del pilar</div><div style="font-size:16px;font-weight:600;color:#1a1a1a;margin-bottom:0.75rem;">${DATA.areas[ai].pilares[pi].name}</div><div style="display:flex;align-items:center;gap:1rem;"><div class="score-big">${avg.toFixed(1)}</div><div><div class="semaforo"><span class="dot ${s.c}"></span>${s.l}</div><div class="score-label">promedio del pilar</div></div></div></div><button class="btn btn-primary" id="btn-np">${isLast?'Ver resultado del área →':'Continuar con el siguiente pilar →'}</button>`;
 }
 
 function areaH(){
   const ai=st.areaIdx,area=DATA.areas[ai],score=calcA(ai),s=sem(score),isLast=ai===DATA.areas.length-1;
-  return`<div class="card"><div class="area-label" style="margin-bottom:0.5rem;">Resultado del área</div><div style="font-size:16px;font-weight:600;color:#1a1a1a;margin-bottom:0.75rem;">${area.name}</div><div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem;"><div class="score-big">${score.toFixed(1)}</div><div><div class="semaforo"><span class="dot ${s.c}"></span>${s.l}</div><div class="score-label">calificación ponderada del área</div></div></div><div style="border-top:1px solid #f0f0ec;padding-top:0.75rem;">${area.pilares.map((p,pi)=>{const a=avgP(ai,pi),sp=sem(a);return`<div class="pilar-row"><span>${p.name}</span><div class="semaforo" style="font-size:13px;"><span class="dot ${sp.c}"></span>${a.toFixed(1)}</div></div>`;}).join('')}</div></div><button class="btn btn-primary" id="btn-na">${isLast?'Ver resultado final →':'Continuar con la siguiente área →'}</button>`;
+  return`<div class="card"><div style="font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.5rem;">Resultado del área</div><div style="font-size:16px;font-weight:600;color:#1a1a1a;margin-bottom:0.75rem;">${area.name}</div><div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem;"><div class="score-big">${score.toFixed(1)}</div><div><div class="semaforo"><span class="dot ${s.c}"></span>${s.l}</div><div class="score-label">calificación ponderada del área</div></div></div><div style="border-top:1px solid #f0f0ec;padding-top:0.75rem;">${area.pilares.map((p,pi)=>{const a=avgP(ai,pi),sp=sem(a);return`<div class="pilar-row"><span>${p.name}</span><div class="semaforo" style="font-size:13px;"><span class="dot ${sp.c}"></span>${a.toFixed(1)}</div></div>`;}).join('')}</div></div><button class="btn btn-primary" id="btn-na">${isLast?'Ver resultado final →':'Continuar con la siguiente área →'}</button>`;
 }
 
+// CAMBIO 2: resultado final con las 4 áreas expandidas mostrando sus 5 pilares
 function resultH(){
   const scores=DATA.areas.map((_,ai)=>calcA(ai));
   const global=scores.reduce((s,v)=>s+v,0)/scores.length,s=sem(global);
   const forts=DATA.areas.filter((_,i)=>scores[i]>=4).map(a=>a.name);
   const crits=DATA.areas.filter((_,i)=>scores[i]<3).map(a=>a.name);
   const devs=DATA.areas.filter((_,i)=>scores[i]>=3&&scores[i]<4).map(a=>a.name);
-  const scoreStr=scores.map((sc,i)=>DATA.areas[i].name+': '+sc.toFixed(1)).join(', ');
-  return`<div class="area-label" style="margin-bottom:0.75rem;">Resultado final · ${st.empresa||'Tu empresa'}</div><div class="card" style="margin-bottom:0.75rem;"><div style="display:flex;align-items:center;gap:1rem;margin-bottom:1rem;"><div class="score-big">${global.toFixed(1)}</div><div><div class="semaforo"><span class="dot ${s.c}"></span>${s.l}</div><div class="score-label">calificación global del diagnóstico</div></div></div>${DATA.areas.map((a,i)=>{const sp=sem(scores[i]);return`<div class="pilar-row"><span>${a.name}</span><div class="semaforo" style="font-size:13px;"><span class="dot ${sp.c}"></span>${scores[i].toFixed(1)}</div></div>`;}).join('')}</div>${forts.length?`<div class="section-title">Fortalezas</div><div style="margin-bottom:1rem;">${forts.map(f=>`<span class="tag green">${f}</span>`).join('')}</div>`:''}${crits.length?`<div class="section-title">Riesgos críticos</div><div style="margin-bottom:1rem;">${crits.map(f=>`<span class="tag red">${f}</span>`).join('')}</div>`:''}${devs.length?`<div class="section-title">En desarrollo</div><div style="margin-bottom:1rem;">${devs.map(f=>`<span class="tag amber">${f}</span>`).join('')}</div>`:''}<button class="btn btn-primary" id="btn-analysis">Obtener análisis y recomendaciones con IA →</button><div class="cta-box" style="margin-top:1rem;"><div class="cta-title">¿Quieres acompañamiento personalizado?</div><div class="cta-text">Comparte este resultado con el Ing. Luis Fernando Londoño para recibir recomendaciones concretas para tu operación, sin ningún compromiso.</div><div class="btn-row"><button class="btn btn-primary" onclick="window.open('https://wa.me/573017276074?text=Hola+Ing.+Luis,+completé+el+autodiagnóstico.+Empresa:+${encodeURIComponent(st.empresa||'N/A')}+Puntaje+global:+${global.toFixed(1)}+Resultados:+${encodeURIComponent(scoreStr)}','_blank')">WhatsApp +57 301 727 6074</button><button class="btn btn-secondary" onclick="window.open('mailto:gerencia@luisf.co?subject=Resultado+Autodiagnóstico&body=Empresa:+${encodeURIComponent(st.empresa||'N/A')}%0APuntaje+global:+${global.toFixed(1)}%0A${encodeURIComponent(scoreStr)}','_blank')">gerencia@luisf.co</button></div></div>`;
+
+  const areasExpandidas = DATA.areas.map((area,ai)=>{
+    const sc=scores[ai], ss=sem(sc);
+    const pilares=area.pilares.map((p,pi)=>{
+      const pa=avgP(ai,pi), ps=sem(pa);
+      return`<div class="pilar-row"><span>${p.name}</span><div class="semaforo" style="font-size:13px;"><span class="dot ${ps.c}"></span>${pa.toFixed(1)}</div></div>`;
+    }).join('');
+    return`<div class="area-block">
+      <div class="area-block-header">
+        <span class="area-block-name">${area.name}</span>
+        <div class="semaforo"><span class="dot ${ss.c}"></span><strong>${sc.toFixed(1)}</strong>&nbsp;<span style="font-size:12px;color:#888;">${ss.l}</span></div>
+      </div>
+      <div class="area-block-pilares">${pilares}</div>
+    </div>`;
+  }).join('');
+
+  // WhatsApp: mensaje corto y amigable — el informe completo llega por correo
+  const waMsg=encodeURIComponent(
+    `Hola Ing. Luis 👋 Acabo de completar el Autodiagnóstico de Excelencia Operacional.\n\n`+
+    `🏭 Empresa: ${st.empresa||'N/A'}\n`+
+    `👤 ${st.responsable||'N/A'} — ${st.cargo||'N/A'}\n`+
+    `📊 Puntaje global: ${global.toFixed(1)} / 5.0 (${s.l})\n\n`+
+    `Áreas:\n`+
+    `• Ingeniería: ${scores[0].toFixed(1)}\n`+
+    `• Calidad: ${scores[1].toFixed(1)}\n`+
+    `• Costos: ${scores[2].toFixed(1)}\n`+
+    `• RRHH: ${scores[3].toFixed(1)}\n\n`+
+    `Me gustaría conocer su opinión y explorar cómo mejorar nuestra operación. ¿Podemos hablar?`
+  );
+
+  return`
+    <div style="font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.75rem;">Resultado final · ${st.empresa||'Tu empresa'}</div>
+    <div class="card" style="margin-bottom:1rem;">
+      <div style="display:flex;align-items:center;gap:1rem;margin-bottom:0.5rem;">
+        <div class="score-big">${global.toFixed(1)}</div>
+        <div><div class="semaforo"><span class="dot ${s.c}"></span>${s.l}</div><div class="score-label">calificación global del diagnóstico</div></div>
+      </div>
+    </div>
+    ${forts.length?`<div class="section-title">Fortalezas</div><div style="margin-bottom:1rem;">${forts.map(f=>`<span class="tag green">${f}</span>`).join('')}</div>`:''}
+    ${crits.length?`<div class="section-title">Riesgos críticos</div><div style="margin-bottom:1rem;">${crits.map(f=>`<span class="tag red">${f}</span>`).join('')}</div>`:''}
+    ${devs.length?`<div class="section-title">En desarrollo</div><div style="margin-bottom:1rem;">${devs.map(f=>`<span class="tag amber">${f}</span>`).join('')}</div>`:''}
+    <div class="section-title">Detalle por área y pilar</div>
+    ${areasExpandidas}
+    <button class="btn btn-primary" id="btn-analysis" style="margin-top:1rem;">Obtener análisis y recomendaciones con IA →</button>
+    <div class="cta-box" style="margin-top:1rem;">
+      <div class="cta-title">¿Quieres acompañamiento personalizado?</div>
+      <div class="cta-text">Comparte este resultado con el Ing. Luis Fernando Londoño para recibir recomendaciones concretas para tu operación, sin ningún compromiso.</div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="window.open('https://wa.me/573017276074?text=${waMsg}','_blank')">WhatsApp +57 301 727 6074</button>
+        <button class="btn btn-secondary" onclick="window.open('mailto:gerencia@luisf.co','_blank')">gerencia@luisf.co</button>
+      </div>
+    </div>`;
 }
 
 function analysisH(){
@@ -223,7 +283,6 @@ async function getAnalysis(){
   st.screen='analysis';render();
   const scores=DATA.areas.map((_,ai)=>calcA(ai));
   const global=scores.reduce((s,v)=>s+v,0)/scores.length;
-  const scoreStr=scores.map((sc,i)=>DATA.areas[i].name+': '+sc.toFixed(1)).join(' | ');
 
   try{
     const resp=await fetch('/api/analyze',{
@@ -239,9 +298,7 @@ async function getAnalysis(){
         global:global.toFixed(1),
         scores:scores.map(s=>s.toFixed(1)),
         respuestas:DATA.areas.flatMap((area,ai)=>area.pilares.flatMap((pilar,pi)=>pilar.preguntas.map((preg,qi)=>({
-          area:area.name,
-          pilar:pilar.name,
-          pregunta:preg,
+          area:area.name,pilar:pilar.name,pregunta:preg,
           respuesta:['A','B','C','D'][st.answers[ai+'-'+pi+'-'+qi]===null?3:st.answers[ai+'-'+pi+'-'+qi]===0?0:st.answers[ai+'-'+pi+'-'+qi]===3?1:2]||'',
           puntaje:st.answers[ai+'-'+pi+'-'+qi]===null?'N/A':st.answers[ai+'-'+pi+'-'+qi]
         }))))
@@ -249,37 +306,21 @@ async function getAnalysis(){
     });
     const data=await resp.json();
     const text=data.analysis||data.content?.[0]?.text||'No se pudo generar el análisis.';
-
-    // CAMBIO 6: guardar el análisis en variable global
     lastAnalysis = text;
 
-    // CAMBIO 2: convertir Markdown a HTML con formato bonito
+    // CAMBIO 3: análisis completo sin límite, con scroll natural de la página
     const htmlContent = markdownToHtml(text);
-
-    // CAMBIO 3: botón WhatsApp con datos completos + primeros 800 chars del análisis
-    const analysisSnippet = text.replace(/[#*_`]/g,'').substring(0,800);
-    const waMsg = encodeURIComponent(
-      `Hola Ing. Luis, completé el autodiagnóstico.\n\n` +
-      `Empresa: ${st.empresa||'N/A'}\n` +
-      `Responsable: ${st.responsable||'N/A'}\n` +
-      `Cargo: ${st.cargo||'N/A'}\n` +
-      `Correo: ${st.email||'N/A'}\n` +
-      `Tipología: ${TIPOS[st.tipo]||'N/A'}\n\n` +
-      `Puntaje global: ${global.toFixed(1)}\n` +
-      `Puntajes por área:\n${scoreStr.replace(/ \| /g,'\n')}\n\n` +
-      `Extracto del análisis IA:\n${analysisSnippet}...`
-    );
 
     document.getElementById('app').innerHTML=`
       <div class="card">
-        <div class="area-label" style="margin-bottom:0.75rem;">Análisis personalizado · ${st.empresa||'Tu empresa'}</div>
+        <div style="font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.75rem;">Análisis personalizado · ${st.empresa||'Tu empresa'}</div>
         <div class="analysis-content">${htmlContent}</div>
       </div>
       <div class="cta-box">
         <div class="cta-title">¿Quieres acompañamiento personalizado?</div>
         <div class="cta-text">Contáctame directamente para trabajar juntos en la transformación de tu operación.</div>
         <div class="btn-row">
-          <button class="btn btn-primary" onclick="window.open('https://wa.me/573017276074?text=${waMsg}','_blank')">WhatsApp +57 301 727 6074</button>
+          <button class="btn btn-primary" onclick="window.open('https://wa.me/573017276074','_blank')">WhatsApp +57 301 727 6074</button>
           <button class="btn btn-secondary" onclick="window.open('mailto:gerencia@luisf.co','_blank')">gerencia@luisf.co</button>
         </div>
       </div>`;
