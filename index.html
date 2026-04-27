@@ -123,7 +123,7 @@ const DATA = {
 const OPTS=[{key:'A',label:'No se hace',pts:0},{key:'B',label:'Se hace parcialmente',pts:3},{key:'C',label:'Se hace bien, se mide y se usa',pts:5},{key:'D',label:'No aplica',pts:null}];
 const TIPOS=['Maquila','Paquete completo con planta propia','Paquete completo con planta propia y terceros','Paquete completo sin planta propia','Servicios especializados (bordado, estampado, lavandería)','Taller creativo (emprendedores o diseñadores)'];
 
-let st={screen:'intro',empresa:'',tipo:undefined,areaIdx:0,pilarIdx:0,qIdx:0,answers:{},showPilar:false,showArea:false};
+let st={screen:'intro',empresa:'',tipo:undefined,responsable:'',cargo:'',email:'',whatsapp:'',areaIdx:0,pilarIdx:0,qIdx:0,answers:{},showPilar:false,showArea:false};let lastAnalysis='';,empresa:'',tipo:undefined,areaIdx:0,pilarIdx:0,qIdx:0,answers:{},showPilar:false,showArea:false};
 
 function k(ai,pi,qi){return ai+'-'+pi+'-'+qi;}
 function avgP(ai,pi){let s=0,c=0;DATA.areas[ai].pilares[pi].preguntas.forEach((_,qi)=>{const v=st.answers[k(ai,pi,qi)];if(v!==undefined&&v!==null){s+=v;c++;}});return c>0?s/c:0;}
