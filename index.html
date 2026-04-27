@@ -193,9 +193,20 @@ async function getAnalysis(){
       headers:{'Content-Type':'application/json'},
       body:JSON.stringify({
         empresa:st.empresa||'N/A',
+        responsable:st.responsable||'',
+        cargo:st.cargo||'',
+        email:st.email||'',
+        whatsapp:st.whatsapp||'',
         tipo:TIPOS[st.tipo]||'N/A',
         global:global.toFixed(1),
-        scores:scores.map(s=>s.toFixed(1))
+        scores:scores.map(s=>s.toFixed(1)),
+        respuestas:DATA.areas.flatMap((area,ai)=>area.pilares.flatMap((pilar,pi)=>pilar.preguntas.map((preg,qi)=>({
+          area:area.name,
+          pilar:pilar.name,
+          pregunta:preg,
+          respuesta:['A','B','C','D'][st.answers[ai+'-'+pi+'-'+qi]===null?3:st.answers[ai+'-'+pi+'-'+qi]===0?0:st.answers[ai+'-'+pi+'-'+qi]===3?1:2]||'',
+          puntaje:st.answers[ai+'-'+pi+'-'+qi]===null?'N/A':st.answers[ai+'-'+pi+'-'+qi]
+        }))))
       })
     });
     const data=await resp.json();
