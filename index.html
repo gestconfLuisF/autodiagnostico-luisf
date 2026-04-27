@@ -237,17 +237,7 @@ function resultH(){
     </div>`;
   }).join('');
 
-  // Guardamos datos WA en variable global para usar en función abrirWA()
-  window._waMsg = 'Hola Ing. Luis, acabo de completar el Autodiagnostico de Excelencia Operacional.'
-    + ' Empresa: ' + (st.empresa||'N/A')
-    + '. Responsable: ' + (st.responsable||'N/A')
-    + '. Cargo: ' + (st.cargo||'N/A')
-    + '. Puntaje global: ' + global.toFixed(1) + ' de 5.0 (' + s.l + ').'
-    + ' Ingenieria: ' + scores[0].toFixed(1)
-    + ', Calidad: ' + scores[1].toFixed(1)
-    + ', Costos: ' + scores[2].toFixed(1)
-    + ', RRHH: ' + scores[3].toFixed(1)
-    + '. Me gustaria conocer su opinion y explorar como mejorar nuestra operacion.';
+
 
   return`
     <div style="font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:0.75rem;">Resultado final · ${st.empresa||'Tu empresa'}</div>
@@ -267,7 +257,7 @@ function resultH(){
       <div class="cta-title">¿Quieres acompañamiento personalizado?</div>
       <div class="cta-text">Comparte este resultado con el Ing. Luis Fernando Londoño para recibir recomendaciones concretas para tu operación, sin ningún compromiso.</div>
       <div class="btn-row">
-        <button class="btn btn-primary" onclick="abrirWA()">WhatsApp +57 301 727 6074</button>
+        <button class="btn btn-primary" onclick="window.open('https://wa.me/573017276074','_blank')">WhatsApp +57 301 727 6074</button>
         <button class="btn btn-secondary" onclick="window.open('mailto:gerencia@luisf.co','_blank')">gerencia@luisf.co</button>
       </div>
     </div>`;
