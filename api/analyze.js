@@ -66,6 +66,49 @@ Máximo 500 palabras.`;
     const text = result.content?.[0]?.text || 'No se pudo obtener respuesta.';
     // Guardar en Google Sheets
 try {
+  const sheetsData = JSON.stringify({
+    empresa: empresa,
+    responsable: req.body.responsable||'',
+    cargo: req.body.cargo||'',
+    email: req.body.email||'',
+    whatsapp: req.body.whatsapp||'',
+    tipo: tipo,
+    global: global,
+    scores: scores,
+    respuestas: req.body.respuestas||[]
+  });
+
+  await new Promise((resolve, reject) => {
+    function makeRequest(url, redirectCount) {
+      if(redirectCount > 5) return reject(new Error('Too many redirects'));
+      const urlObj = new URL(url);
+      const options = {
+        hostname: urlObj.hostname,
+        path: urlObj.pathname + urlObj.search,
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(sheetsData)
+        }
+      };
+      const req = https.request(options, (res) => {
+        if(res.statusCode === 302 || res.statusCode === 301) {
+          makeRequest(res.headers.location, redirectCount + 1);
+        } else {
+          res.on('data', () => {});
+          res.on('end', resolve);
+        }
+      });
+      req.on('error', reject);
+      req.write(sheetsData);
+      req.end();
+    }
+    makeRequest('https://script.google.com/macros/s/AKfycbxcT6g1hAJvCHxhi415C0A3E7J9g3dEPMp1MCVU-WP3doyFOAnOBF7a2iFQAy4RepqrPg/exec', 0);
+  });
+} catch(sheetsError) {
+  console.log('Error guardando en Sheets:', sheetsError.message);
+}
+try {
   await new Promise((resolve, reject) => {
     const sheetsUrl = 'https://script.google.com/macros/s/AKfycbxcT6g1hAJvCHxhi415C0A3E7J9g3dEPMp1MCVU-WP3doyFOAnOBF7a2iFQAy4RepqrPg/exec';
     const sheetsData = JSON.stringify({
